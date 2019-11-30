@@ -1,0 +1,9 @@
+main: me.downthepark.sethome.SetHome
+name: SetHome
+version: '5.0'
+description: A lightweight SetHome plugin for Bukkit/Spigot
+commands:
+  sethome:
+    description: Set your home
+  home:
+    description: Warp to your home
