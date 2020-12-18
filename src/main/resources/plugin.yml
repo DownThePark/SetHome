@@ -7,3 +7,8 @@ commands:
     description: Set your home
   home:
     description: Warp to your home
+permissions:
+  home.set:
+    description: Allows to set the home
+  home.tp:
+    description: Allows to teleport to the home

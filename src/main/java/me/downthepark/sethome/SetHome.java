@@ -58,16 +58,20 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
                 // --- If the sender is a player, continue below
                 Player player = (Player) sender; // --- Create instance of Player and cast it to sender
 
-                if (config.getBoolean("sethome-command-delay")) {
-                    int coolDown = config.getInt("sethome-time-delay");
-                    if (cooldownTimeSetHome.containsKey(player)) {
-                        player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeSetHome.get(player) + ChatColor.GRAY + " seconds.");
+                if (player.hasPermission("home.set")) {
+                    if (config.getBoolean("sethome-command-delay")) {
+                        int coolDown = config.getInt("sethome-time-delay");
+                        if (cooldownTimeSetHome.containsKey(player)) {
+                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeSetHome.get(player) + ChatColor.GRAY + " seconds.");
+                        } else {
+                            setPlayerHome(player);
+                            setCoolDownTimeSetHome(player, coolDown);
+                        }
                     } else {
                         setPlayerHome(player);
-                        setCoolDownTimeSetHome(player, coolDown);
                     }
                 } else {
-                    setPlayerHome(player);
+                    player.sendMessage(prefixError + "You dont have the permission to use this command!");
                 }
 
 
@@ -83,20 +87,24 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
 
                 Player player = (Player) sender;
 
-                if (utils.homeIsNull(player)) {
-                    player.sendMessage(ChatColor.DARK_RED + "[" + ChatColor.RED + "*" + ChatColor.DARK_RED + "] " + ChatColor.GRAY + "You must first use /sethome");
-                } else {
-                    if (config.getBoolean("home-command-delay")) {
-                        int coolDown = config.getInt("home-time-delay");
-                        if (cooldownTimeHome.containsKey(player)) {
-                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeHome.get(player) + ChatColor.GRAY + " seconds.");
+                if (player.hasPermission("home.tp")) {
+                    if (utils.homeIsNull(player)) {
+                        player.sendMessage(ChatColor.DARK_RED + "[" + ChatColor.RED + "*" + ChatColor.DARK_RED + "] " + ChatColor.GRAY + "You must first use /sethome");
+                    } else {
+                        if (config.getBoolean("home-command-delay")) {
+                            int coolDown = config.getInt("home-time-delay");
+                            if (cooldownTimeHome.containsKey(player)) {
+                                player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeHome.get(player) + ChatColor.GRAY + " seconds.");
+                            } else {
+                                sendPlayerHome(player);
+                                setCoolDownTimeHome(player, coolDown);
+                            }
                         } else {
                             sendPlayerHome(player);
-                            setCoolDownTimeHome(player, coolDown);
                         }
-                    } else {
-                        sendPlayerHome(player);
                     }
+                } else {
+                    player.sendMessage(prefixError + "You dont have the permission to use this command!");
                 }
             }
         }
