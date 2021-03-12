@@ -45,26 +45,33 @@ public class SetHome extends JavaPlugin
                     Player player = (Player) sender;
                     if (homeIsSet(player))
                     {
-                        int coolDown = config.getInt("home-time-delay");
-                        if ((coolDown > 0) && config.getBoolean("home-command-delay"))
+                        int coolDown = config.getInt("home-delay-seconds");
+                        if (coolDown > 0)
                         {
-                            if (config.getBoolean("home-warmup-instead-of-cooldown"))
+                            if (cooldownTimeHome.containsKey(player)) // Command is ON cooldown
                             {
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&7*&8]&7 Teleporting after " + coolDown + " seconds..."));
-                                getServer().getScheduler().scheduleSyncDelayedTask(this, () -> sendPlayerHome(player), 20L * coolDown);
-                            }
-                            else {
-                                if (cooldownTimeHome.containsKey(player))
+                                if (config.getBoolean("home-warmup-instead-of-cooldown"))
+                                {
+                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + cooldownTimeHome.get(player) + ChatColor.GRAY + " seconds...");
+                                }
+                                else
                                 {
                                     player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeHome.get(player) + ChatColor.GRAY + " seconds.");
+                                }
+                            }
+                            else // Command is OFF cooldown
+                            {
+                                if (config.getBoolean("home-warmup-instead-of-cooldown"))
+                                {
+                                    getServer().getScheduler().scheduleSyncDelayedTask(this, () -> sendPlayerHome(player), 20L * coolDown);
+                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + coolDown + ChatColor.GRAY + " seconds...");
                                 }
                                 else
                                 {
                                     sendPlayerHome(player);
-                                    setCoolDownTimeHome(player, coolDown);
                                 }
+                                setCoolDownTimeHome(player, coolDown);
                             }
-
                         }
                         else
                         {
@@ -89,8 +96,8 @@ public class SetHome extends JavaPlugin
                 if (sender instanceof Player)
                 {
                     Player player = (Player) sender;
-                    int coolDown = config.getInt("sethome-time-delay");
-                    if ((coolDown > 0) && config.getBoolean("sethome-command-delay"))
+                    int coolDown = config.getInt("sethome-delay-seconds");
+                    if (coolDown > 0)
                     {
                         if (cooldownTimeSetHome.containsKey(player))
                         {
@@ -132,6 +139,16 @@ public class SetHome extends JavaPlugin
         getServer().getPluginManager().registerEvents(new SetHomeEvents(this), this);
         // --- Load configuration defaults and save file in data folder
         config.options().copyDefaults(true);
+        if (!convertOldConfig())
+        {
+            // convertOldConfig failed, do some cleanup.
+            getLogger().log(Level.WARNING, "Found a old config file, but it was missing keys unexpectedly. "
+                    + "Please check the config file to make sure everything is OK.");
+            config.set("sethome-command-delay", null);
+            config.set("sethome-time-delay"   , null);
+            config.set("home-command-delay"   , null);
+            config.set("home-time-delay"      , null);
+        }
         saveDefaultConfig();
         try
         {
@@ -139,6 +156,7 @@ public class SetHome extends JavaPlugin
         }
         catch (IOException e)
         {
+            getLogger().log(Level.SEVERE, "Failed writing config file to disk!");
             e.printStackTrace();
         }
         if (!homesFile.exists())
@@ -268,6 +286,63 @@ public class SetHome extends JavaPlugin
     homeIsSet(Player player)
     {
         return !(homes.getString("Homes." + player.getUniqueId()) == null);
+    }
+
+    private boolean
+    convertOldConfig()
+    {
+        // assume that if this old setting exists, then this is an old config which needs to be converted.
+        // if it doesn't exists, don't bother checking the rest, as it could not be a valid config anyway.
+        // some extra care is taken during conversion to make sure we produce valid entries to our new config.
+        boolean success = true;
+        if (config.isSet("sethome-command-delay"))
+        {
+            if (config.isSet("sethome-time-delay"))
+            {
+                if (config.getBoolean("sethome-command-delay"))
+                {
+                    // carry over the value to the new config
+                    config.set("sethome-delay-seconds", Math.max(0, config.getInt("sethome-time-delay")));
+                }
+                config.set("sethome-time-delay", null); // removes option
+            }
+            else
+            {
+                getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                        + "Config contains \"sethome-command-delay\", but is missing \"sethome-time-delay\".");
+                success = false;
+            }
+            config.set("sethome-command-delay", null); // removes option
+
+            // Check the other command
+            if (config.isSet("home-command-delay"))
+            {
+                if (config.isSet("home-time-delay"))
+                {
+                    if (config.getBoolean("home-command-delay"))
+                    {
+                        // carry over the value to the new config
+                        config.set("home-delay-seconds", Math.max(0, config.getInt("home-time-delay")));
+                    }
+                    config.set("home-time-delay", null); // removes option
+                }
+                else
+                {
+                    getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                            + "Config contains \"sethome-command-delay\" and \"home-command-delay\", "
+                            + "but is missing \"home-time-delay\".");
+                    success = false;
+                }
+                config.set("home-command-delay", null); //removes option
+            }
+            else
+            {
+                getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                        + "Config contains \"sethome-command-delay\", but is missing \"home-command-delay\".");
+                success = false;
+            }
+        }
+        return success;
     }
 
 }
