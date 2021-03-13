@@ -218,10 +218,11 @@ public class SetHome extends JavaPlugin
     private void
     sendPlayerHome(Player player)
     {
-        player.teleport(getHomeLocation(player));
+        Location location = getHomeLocation(player);
+        player.teleport(location);
         if (config.getBoolean("play-warp-sound"))
         {
-            player.playSound(getHomeLocation(player), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            player.playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
         if (config.getBoolean("show-teleport-message")) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',
