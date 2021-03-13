@@ -27,6 +27,7 @@ public class SetHome extends JavaPlugin
     private YamlConfiguration homes     = YamlConfiguration.loadConfiguration(homesFile);
     private boolean homesHasChanged     = false;
     private Plugin thisPlugin           = this;
+    private Thread autoReloadThread;
 
     private HashMap<Player, Long> lastUsedHome;
     private HashMap<Player, Long> lastUsedSetHome;
@@ -178,6 +179,8 @@ public class SetHome extends JavaPlugin
     public void
     onDisable()
     {
+        autoReloadThread.interrupt();
+        getServer().getScheduler().cancelTasks(this);
         saveHomesFile();
     }
 
@@ -344,79 +347,70 @@ public class SetHome extends JavaPlugin
     private void
     startAutoReloadConfigTask()
     {
-        new BukkitRunnable()
+        autoReloadThread = new Thread(() ->
         {
-            public void run()
+            boolean configHasChanged = false;
+            long timeOfLastReload = System.currentTimeMillis();
+            long msSinceLastReload;
+            try
             {
-                boolean configHasChanged = false;
-                long timeOfLastReload    = System.currentTimeMillis();
-                long msSinceLastReload;
-                try
+                WatchService watchService = FileSystems.getDefault().newWatchService();
+                Path dataFolderPath = getDataFolder().toPath();
+                dataFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
+                WatchKey key;
+                while (true)
                 {
-                    WatchService watchService   = FileSystems.getDefault().newWatchService();
-                    Path         dataFolderPath = getDataFolder().toPath();
-                    dataFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-                    WatchKey key;
-                    //noinspection InfiniteLoopStatement
-                    while (true)
+                    key = watchService.take();
+                    for (WatchEvent<?> event : key.pollEvents())
                     {
-                        key = watchService.take();
-                        for (WatchEvent<?> event : key.pollEvents())
+                        // getLogger().log(Level.INFO, "Auto Reload event: " + event.context().toString() + " " + event.kind().toString() + " " + event.count());
+                        if (event.context().toString().endsWith("config.yml"))
                         {
-                            // getLogger().log(Level.INFO, "Auto Reload event: " + event.context().toString() + " " + event.kind().toString() + " " + event.count());
-                            if(event.context().toString().endsWith("config.yml"))
-                            {
-                                configHasChanged = true;
-                            }
+                            configHasChanged = true;
                         }
-                        if (configHasChanged)
-                        {
-                            msSinceLastReload = System.currentTimeMillis() - timeOfLastReload;
-                            if (msSinceLastReload > 8000) // Wait at least 8 seconds before reloading again.
-                            {
-                                new BukkitRunnable()
-                                {
-                                    public void run()
-                                    {
-                                        reloadConfig2();
-                                        boolean foundOldConfig = convertFromOldConfig();
-                                        if (foundOldConfig)
-                                        {
-                                            saveConfig();
-                                            reloadConfig2();
-                                        }
-                                        getLogger().log(Level.INFO, "Config has been automatically reloaded.");
-                                    }
-                                }.runTaskLater(thisPlugin, 40); // Do the actual reloading in a synchronous task ~2 seconds later.
-                                timeOfLastReload = System.currentTimeMillis() + 2000;
-                            }
-                            configHasChanged = false;
-                            // Thread.sleep(4000);
-                        }
-                        key.reset();
                     }
+                    if (configHasChanged)
+                    {
+                        msSinceLastReload = System.currentTimeMillis() - timeOfLastReload;
+                        if (msSinceLastReload > 8000) // Wait at least 8 seconds before reloading again.
+                        {
+                            new BukkitRunnable()
+                            {
+                                public void run()
+                                {
+                                    reloadConfig2();
+                                    boolean foundOldConfig = convertFromOldConfig();
+                                    if (foundOldConfig)
+                                    {
+                                        saveConfig();
+                                        reloadConfig2();
+                                    }
+                                    getLogger().log(Level.INFO, "Config has been automatically reloaded.");
+                                }
+                            }.runTaskLater(thisPlugin, 20); // Do the actual reloading in a synchronous task ~1 second later.
+                            timeOfLastReload = System.currentTimeMillis() + 1000;
+                        }
+                        configHasChanged = false;
+                    }
+                    key.reset();
                 }
-                catch (IOException e)
-                {
-                    getLogger().log(Level.WARNING, "Auto Config reloading has crashed due to an IOException (it won't restart):");
-                    e.printStackTrace();
-                    cancel();
-                }
-                catch (InterruptedException e)
-                {
-                    getLogger().log(Level.WARNING, "Auto Config reloading has stopped due to having been Interrupted (it won't restart):");
-                    e.printStackTrace();
-                    cancel();
-                }
-                catch (Exception e)
-                {
-                    getLogger().log(Level.WARNING, "Auto Config reloading has crashed unexpectedly (it won't restart):");
-                    e.printStackTrace();
-                    cancel();
-                }
-
             }
-        }.runTaskLaterAsynchronously(this, 100);
+            catch (IOException e)
+            {
+                getLogger().log(Level.WARNING, "Auto Config reloading has crashed due to an IOException (it won't restart):");
+                e.printStackTrace();
+            }
+            catch (InterruptedException e)
+            {
+                getLogger().log(Level.INFO, "Auto Config reloading has stopped due to having been Interrupted (it won't restart):");
+            }
+            catch (Exception e)
+            {
+                getLogger().log(Level.WARNING, "Auto Config reloading has crashed unexpectedly (it won't restart):");
+                e.printStackTrace();
+            }
+        });
+        autoReloadThread.start();
     }
 
 }
