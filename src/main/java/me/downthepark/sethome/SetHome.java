@@ -236,7 +236,7 @@ public class SetHome extends JavaPlugin
     boolean
     homeIsSet(Player player)
     {
-        return !(homes.getString("Homes." + player.getUniqueId()) == null);
+        return (homes.getString("Homes." + player.getUniqueId()) != null);
     }
 
     Location
@@ -402,7 +402,7 @@ public class SetHome extends JavaPlugin
             }
             catch (InterruptedException e)
             {
-                getLogger().log(Level.INFO, "Auto Config reloading has stopped due to having been Interrupted (it won't restart):");
+                getLogger().log(Level.INFO, "Auto Config reloading has stopped due to having been Interrupted (it won't restart).");
             }
             catch (Exception e)
             {
