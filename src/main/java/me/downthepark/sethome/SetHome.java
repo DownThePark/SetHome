@@ -1,198 +1,416 @@
 package me.downthepark.sethome;
 
-// --- Import Bukkit libraries
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-// --- Import Java libraries
+public class SetHome extends JavaPlugin
+{
+    private FileConfiguration config    = getConfig();
+    private File              homesFile = new File(getDataFolder(), "Homes.yml");
+    private YamlConfiguration homes     = YamlConfiguration.loadConfiguration(homesFile);
+    private boolean homesHasChanged     = false;
+    private Plugin thisPlugin           = this;
+    private Thread autoReloadThread;
 
-// --- Beginning of SetHome class
-public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit plugin)
+    private HashMap<Player, Long> lastUsedHome;
+    private HashMap<Player, Long> lastUsedSetHome;
 
-    // --- Create private instance of 'Homes.yml' file
-    private File file = new File(getDataFolder(), "Homes.yml");
-    // --- Create package-private instance of 'Homes.yml' (configurable type)
-    YamlConfiguration homes = YamlConfiguration.loadConfiguration(file);
-
-    // --- Create instance of config from Bukkit's getConfig() method. (kind of useless)
-    private FileConfiguration config = getConfig();
-
-    private HashMap<Player, Integer> cooldownTimeHome;
-    private HashMap<Player, BukkitRunnable> cooldownTaskHome;
-
-    private HashMap<Player, Integer> cooldownTimeSetHome;
-    private HashMap<Player, BukkitRunnable> cooldownTaskSetHome;
-
-    // --- Create variable of String type that simplifies handling the error prefix for messages
     private static final String prefixError = ChatColor.DARK_RED + "[" + ChatColor.RED + "*" + ChatColor.DARK_RED + "] " + ChatColor.GRAY;
 
-    // --- Create instance of SetHomeUtils and pass in 'JavaPlugin' as parameter
-    private SetHomeUtils utils = new SetHomeUtils(this);
-
-    // --- Function called onCommand() that is called by the server to get command information
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        // --- Check if command equals 'sethome'
-        if (command.getName().equals("sethome")) {
-            // --- Check if the one sending the command is the Console
-            if (sender instanceof ConsoleCommandSender) {
-                // --- If the sender if Console, tell them to piss off
-                getLogger().log(Level.WARNING, "Only players can use this command.");
-
-            } else if (sender instanceof Player) { // --- Check if the sender is a Player
-                // --- If the sender is a player, continue below
-                Player player = (Player) sender; // --- Create instance of Player and cast it to sender
-
-                if (config.getBoolean("sethome-command-delay")) {
-                    int coolDown = config.getInt("sethome-time-delay");
-                    if (cooldownTimeSetHome.containsKey(player)) {
-                        player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeSetHome.get(player) + ChatColor.GRAY + " seconds.");
-                    } else {
-                        setPlayerHome(player);
-                        setCoolDownTimeSetHome(player, coolDown);
-                    }
-                } else {
-                    setPlayerHome(player);
-                }
-
-
-            } else { // --- If anything goes wrong, tell the sender there was some sort of error that took place
-                sender.sendMessage(prefixError + "There was an error performing this command.");
-            }
-
-        } else if (command.getName().equals("home")) { // --- I think I'm gonna take a break with the comments for now.
-
-            if (sender instanceof ConsoleCommandSender) {
-                getLogger().log(Level.WARNING, "Only players can use this command.");
-            } else if (sender instanceof Player) {
-
-                Player player = (Player) sender;
-
-                if (utils.homeIsNull(player)) {
-                    player.sendMessage(ChatColor.DARK_RED + "[" + ChatColor.RED + "*" + ChatColor.DARK_RED + "] " + ChatColor.GRAY + "You must first use /sethome");
-                } else {
-                    if (config.getBoolean("home-command-delay")) {
-                        int coolDown = config.getInt("home-time-delay");
-                        if (cooldownTimeHome.containsKey(player)) {
-                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + cooldownTimeHome.get(player) + ChatColor.GRAY + " seconds.");
-                        } else {
-                            sendPlayerHome(player);
-                            setCoolDownTimeHome(player, coolDown);
+    @Override // --- This is called by the server to get command information.
+    public boolean
+    onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
+        boolean success = true;
+        switch (command.getName())
+        {
+            case "home":
+            {
+                if (sender instanceof Player)
+                {
+                    Player player = (Player) sender;
+                    if (homeIsSet(player))
+                    {
+                        int coolDownTime = config.getInt("home-delay-seconds");
+                        if (coolDownTime > 0)
+                        {
+                            double SecondsSinceLastUse = ((System.currentTimeMillis() - lastUsedHome.getOrDefault(player, 0L)) * 0.001);
+                            if (SecondsSinceLastUse < coolDownTime) // Command is ON cooldown
+                            {
+                                int SecondsLeft = (int) (coolDownTime - SecondsSinceLastUse);
+                                if (config.getBoolean("home-warmup-instead-of-cooldown"))
+                                {
+                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds...");
+                                }
+                                else
+                                {
+                                    player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds.");
+                                }
+                            }
+                            else // Command is OFF cooldown
+                            {
+                                if (config.getBoolean("home-warmup-instead-of-cooldown"))
+                                {
+                                    getServer().getScheduler().scheduleSyncDelayedTask(this, () -> sendPlayerHome(player), 20L * coolDownTime);
+                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + coolDownTime + ChatColor.GRAY + " seconds...");
+                                }
+                                else
+                                {
+                                    sendPlayerHome(player);
+                                }
+                                lastUsedHome.put(player, System.currentTimeMillis());
+                            }
                         }
-                    } else {
-                        sendPlayerHome(player);
+                        else
+                        {
+                            sendPlayerHome(player);
+                        }
+                    }
+                    else
+                    {
+                        player.sendMessage(prefixError + "You must first use /sethome");
+                        success = false;
                     }
                 }
+                else // Command is unavailable from the console
+                {
+                    getLogger().log(Level.WARNING, "Only players can use this command.");
+                    success = false;
+                }
+                break;
+            }
+            case "sethome":
+            {
+                if (sender instanceof Player)
+                {
+                    Player player = (Player) sender;
+                    int coolDownTime = config.getInt("sethome-delay-seconds");
+                    if (coolDownTime > 0)
+                    {
+                        double SecondsSinceLastUse = ((System.currentTimeMillis() - lastUsedSetHome.getOrDefault(player, 0L)) * 0.001);
+                        if (SecondsSinceLastUse < coolDownTime) // Command is ON cooldown
+                        {
+                            int SecondsLeft = (int) (coolDownTime - SecondsSinceLastUse);
+                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds.");
+                        }
+                        else // Command is OFF cooldown
+                        {
+                            setPlayerHome(player);
+                            lastUsedSetHome.put(player, System.currentTimeMillis());
+                        }
+                    }
+                    else
+                    {
+                        setPlayerHome(player);
+                    }
+                }
+                else // Command is unavailable from the console
+                {
+                    getLogger().log(Level.WARNING, "Only players can use this command.");
+                    success = false;
+                }
+                break;
+            }
+            default:
+            {
+                getLogger().log(Level.WARNING, "Unrecognized Command received.");
+                success = false;
             }
         }
-
-        return false;
+        return success;
     }
 
-    public void onEnable() {
-
-        // --- Make commands work using this 'getCommand()' function
-        getCommand("sethome").setExecutor(this);
-        getCommand("home").setExecutor(this);
-
-        // --- Register plugin events to server
+    @Override // Called when this plugin is enabled
+    public void
+    onEnable()
+    {
+        getCommand("sethome").setExecutor((CommandExecutor)this);
+        getCommand("home"   ).setExecutor((CommandExecutor)this);
         getServer().getPluginManager().registerEvents(new SetHomeEvents(this), this);
-
-        // --- Load configuration defaults and save file in data folder
-        config.options().copyDefaults(true);
+        // Load configuration and save file in data folder, and start config auto reloading task
         saveDefaultConfig();
-
-        try {
-            config.save(getDataFolder() + File.separator + "config.yml");
-        } catch (IOException e) {
-            e.printStackTrace();
+        reloadConfig2();
+        boolean foundOldConfig = convertFromOldConfig();
+        if (foundOldConfig)
+        {
+            saveConfig();
+            reloadConfig2();
         }
-
-        // --- Check if 'Homes.yml' exists - if not, create a new one
-        if (!file.exists()) {
+        startAutoReloadConfigTask();
+        // Save "homes" to disk, and set up a synchronous task to save every 5 minutes
+        if (!homesFile.exists())
+        {
             saveHomesFile();
         }
-        cooldownTimeHome = new HashMap<>();
-        cooldownTaskHome = new HashMap<>();
-
-        cooldownTimeSetHome = new HashMap<>();
-        cooldownTaskSetHome = new HashMap<>();
+        new BukkitRunnable()
+        {
+            public void run()
+            {
+                if (homesHasChanged)
+                {
+                    saveHomesFile();
+                    homesHasChanged = false;
+                }
+            }
+        }.runTaskTimer(this, 6000, 6000); // 6000 ~= 5 minutes between each check (20 ticks/second * 300 seconds)
+        // Initialize command cooldown HashMaps
+        lastUsedHome    = new HashMap<>();
+        lastUsedSetHome = new HashMap<>();
     }
 
-    // --- Method to save 'Homes.yml' file
-    public void saveHomesFile() {
-        try {
-            homes.save(file);
-        } catch (IOException e) {
+    @Override // Called when this plugin is disabled (e.g. at server shutdown)
+    public void
+    onDisable()
+    {
+        autoReloadThread.interrupt();
+        getServer().getScheduler().cancelTasks(this);
+        saveHomesFile();
+    }
+
+    private void
+    saveHomesFile()
+    {
+        try
+        {
+            homes.save(homesFile);
+            getLogger().log(Level.INFO, "Homes have been saved to disk."); // TODO: Disable this message?
+        }
+        catch (IOException e)
+        {
             getLogger().log(Level.SEVERE, "Could not save homes file.\nHere is the stack trace:");
             e.printStackTrace();
         }
     }
 
-    void sendPlayerHome(Player player) {
-        utils.sendHome(player);
-        if (config.getBoolean("play-warp-sound")) {
-            player.playSound(utils.getHomeLocation(player), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+    private void
+    setPlayerHome(Player player)
+    {
+        Location location    = player.getLocation();
+        String playerPrefix  = "Homes." + player.getUniqueId().toString();
+        homes.set(playerPrefix + ".X"    , location.getX());
+        homes.set(playerPrefix + ".Y"    , location.getY());
+        homes.set(playerPrefix + ".Z"    , location.getZ());
+        homes.set(playerPrefix + ".Yaw"  , location.getYaw());
+        homes.set(playerPrefix + ".Pitch", location.getPitch());
+        homes.set(playerPrefix + ".World", location.getWorld().getName());
+        homesHasChanged = true;
+        if (config.getBoolean("show-sethome-message"))
+        {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    config.getString("sethome-message").replace("%player%", player.getDisplayName())));
         }
-        String strFormatted = config.getString("teleport-message").replace("%player%", player.getDisplayName());
+    }
+
+    private void
+    sendPlayerHome(Player player)
+    {
+        Location location = getHomeLocation(player);
+        player.teleport(location);
+        if (config.getBoolean("play-warp-sound"))
+        {
+            player.playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        }
         if (config.getBoolean("show-teleport-message")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', strFormatted));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    config.getString("teleport-message").replace("%player%", player.getDisplayName())));
         }
     }
 
-    void setPlayerHome(Player player) {
-        // --- Set player's home by saving it to a file (Homes.yml)
-        utils.setHome(player);
-        // --- If option 'show-sethome-message' is enabled in config, show the player the 'sethome-message' as defined in 'config.yml'
-        if (config.getBoolean("show-sethome-message")) {
-            // --- Create instance of a String that is formatted from the 'config.yml' file.
-            String strFormatted = config.getString("sethome-message").replace("%player%", player.getDisplayName());
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', strFormatted));
-        }
+    boolean
+    homeIsSet(Player player)
+    {
+        return (homes.getString("Homes." + player.getUniqueId()) != null);
     }
 
-    void setCoolDownTimeHome(Player player, int coolDown) {
-        cooldownTimeHome.put(player, coolDown);
-        cooldownTaskHome.put(player, new BukkitRunnable() {
-            public void run() {
-                cooldownTimeHome.put(player, cooldownTimeHome.get(player) - 1);
-                if (cooldownTimeHome.get(player) == 0) {
-                    cooldownTimeHome.remove(player);
-                    cooldownTaskHome.remove(player);
-                    cancel();
-                }
-            }
-        });
-        cooldownTaskHome.get(player).runTaskTimer(this, 20, 20);
+    Location
+    getHomeLocation(Player player)
+    {
+        String playerPrefix = "Homes." + player.getUniqueId().toString();
+        return new Location(
+                Bukkit.getWorld(homes.getString(playerPrefix  + ".World")),
+                homes.getDouble(playerPrefix + ".X"),
+                homes.getDouble(playerPrefix + ".Y"),
+                homes.getDouble(playerPrefix + ".Z"),
+                (float) homes.getLong(playerPrefix + ".Yaw"),
+                (float) homes.getLong(playerPrefix + ".Pitch")
+        );
     }
-    void setCoolDownTimeSetHome(Player player, int coolDown) {
-        cooldownTimeSetHome.put(player, coolDown);
-        cooldownTaskSetHome.put(player, new BukkitRunnable() {
-            public void run() {
-                cooldownTimeSetHome.put(player, cooldownTimeSetHome.get(player) - 1);
-                if (cooldownTimeSetHome.get(player) == 0) {
-                    cooldownTimeSetHome.remove(player);
-                    cooldownTaskSetHome.remove(player);
-                    cancel();
+
+    private void
+    reloadConfig2()
+    {
+        reloadConfig();
+        config = getConfig();
+        config.options().copyDefaults(true);
+    }
+
+    private boolean
+    convertFromOldConfig()
+    {
+        // assume that if this old setting exists, then this is an old config which needs to be converted.
+        // if it doesn't exists, don't bother checking the rest, as it could not be a valid config anyway.
+        // some extra care is taken during conversion to make sure we produce valid entries to our new config.
+        boolean foundOldConfig = config.isSet("home-time-delay");
+        if (foundOldConfig)
+        {
+            boolean success = true;
+            // Convert /home command
+            if (config.isSet("home-command-delay"))
+            {
+                if (config.isSet("home-time-delay"))
+                {
+                    if (config.getBoolean("home-command-delay"))
+                    {
+                        config.set("home-delay-seconds", Math.max(0, config.getInt("home-time-delay")));
+                    }
+                    else
+                    {
+                        config.set("home-delay-seconds", 0);
+                    }
+                }
+                else
+                {
+                    getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                            + "Config contains \"home-command-delay\", but is missing \"home-time-delay\".");
+                    success = false;
                 }
             }
+            else
+            {
+                getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                        + "Config contains \"home-time-delay\", but is missing \"home-command-delay\".");
+                success = false;
+            }
+
+            // Convert /sethome command
+            if (config.isSet("sethome-command-delay"))
+            {
+                if (config.isSet("sethome-time-delay"))
+                {
+                    if (config.getBoolean("sethome-command-delay"))
+                    {
+                        config.set("sethome-delay-seconds", Math.max(0, config.getInt("sethome-time-delay")));
+                    }
+                    else
+                    {
+                        config.set("sethome-delay-seconds", 0);
+                    }
+                }
+                else
+                {
+                    getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                            + "Config contains \"sethome-command-delay\", but is missing \"sethome-time-delay\".");
+                    success = false;
+                }
+            }
+            else
+            {
+                getLogger().log(Level.WARNING, "Corrupted old config file detected! "
+                        + "Config contains \"home-time-delay\", but is missing \"sethome-command-delay\".");
+                success = false;
+            }
+            config.set("sethome-command-delay", null);
+            config.set("sethome-time-delay"   , null);
+            config.set("home-command-delay"   , null);
+            config.set("home-time-delay"      , null);
+            if (!success)
+            {
+                // conversion failed, issue warning.
+                getLogger().log(Level.WARNING, "Found a old config file, but it was missing keys unexpectedly. "
+                        + "Please check the config file to make sure everything is OK.");
+            }
+        }
+        return foundOldConfig;
+    }
+
+    /**
+     *  Uses a java WatchService to asynchronously wait for changes to the dataFolder directory.
+     *  If a config.yml file is created or modified, a synchronous task is started, which reloads the config file.
+     */
+    private void
+    startAutoReloadConfigTask()
+    {
+        autoReloadThread = new Thread(() ->
+        {
+            boolean configHasChanged = false;
+            long timeOfLastReload = System.currentTimeMillis();
+            long msSinceLastReload;
+            try
+            {
+                WatchService watchService = FileSystems.getDefault().newWatchService();
+                Path dataFolderPath = getDataFolder().toPath();
+                dataFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
+                WatchKey key;
+                while (true)
+                {
+                    key = watchService.take();
+                    for (WatchEvent<?> event : key.pollEvents())
+                    {
+                        // getLogger().log(Level.INFO, "Auto Reload event: " + event.context().toString() + " " + event.kind().toString() + " " + event.count());
+                        if (event.context().toString().endsWith("config.yml"))
+                        {
+                            configHasChanged = true;
+                        }
+                    }
+                    if (configHasChanged)
+                    {
+                        msSinceLastReload = System.currentTimeMillis() - timeOfLastReload;
+                        if (msSinceLastReload > 8000) // Wait at least 8 seconds before reloading again.
+                        {
+                            new BukkitRunnable()
+                            {
+                                public void run()
+                                {
+                                    reloadConfig2();
+                                    boolean foundOldConfig = convertFromOldConfig();
+                                    if (foundOldConfig)
+                                    {
+                                        saveConfig();
+                                        reloadConfig2();
+                                    }
+                                    getLogger().log(Level.INFO, "Config has been automatically reloaded.");
+                                }
+                            }.runTaskLater(thisPlugin, 20); // Do the actual reloading in a synchronous task ~1 second later.
+                            timeOfLastReload = System.currentTimeMillis() + 1000;
+                        }
+                        configHasChanged = false;
+                    }
+                    key.reset();
+                }
+            }
+            catch (IOException e)
+            {
+                getLogger().log(Level.WARNING, "Auto Config reloading has crashed due to an IOException (it won't restart):");
+                e.printStackTrace();
+            }
+            catch (InterruptedException e)
+            {
+                getLogger().log(Level.INFO, "Auto Config reloading has stopped due to having been Interrupted (it won't restart).");
+            }
+            catch (Exception e)
+            {
+                getLogger().log(Level.WARNING, "Auto Config reloading has crashed unexpectedly (it won't restart):");
+                e.printStackTrace();
+            }
         });
-        cooldownTaskSetHome.get(player).runTaskTimer(this, 20, 20);
+        autoReloadThread.start();
     }
 
 }

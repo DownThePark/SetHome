@@ -6,7 +6,7 @@
 
     <groupId>me.downthepark</groupId>
     <artifactId>SetHome</artifactId>
-    <version>5.0</version>
+    <version>6.1.1</version>
 
     <repositories>
         <!-- This adds the Spigot Maven repository to the build -->
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
