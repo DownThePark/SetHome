@@ -18,7 +18,8 @@ This is great for Survival servers that need something simple and lightweight. S
 - /home
 
 ### Permissions:
-- None required 
+- home.tp
+- home.set
 
 ### Extra Features:
 - Respawn player to their home saved in "Homes.yml" (Can be disabled in 'config.yml' file)
