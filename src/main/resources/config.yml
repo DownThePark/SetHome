@@ -9,8 +9,11 @@ teleport-message: '&2[&a*&2]&a &aYou have been teleported to your home, &6%playe
 play-warp-sound: true
 respawn-player-at-home: true
 
-sethome-command-delay: false
-sethome-time-delay: 5
+# previous name: sethome-time-delay
+# set this to 0 to disabled delay
+sethome-delay-seconds: 5
 
-home-command-delay: true
-home-time-delay: 5
+# previous name: home-time-delay
+# set this to 0 to disabled delay
+home-delay-seconds: 5
+home-warmup-instead-of-cooldown: false
