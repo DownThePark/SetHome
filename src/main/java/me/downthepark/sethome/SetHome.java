@@ -79,8 +79,7 @@ public class SetHome extends JavaPlugin {
                     int coolDownTime = config.getInt("sethome-delay-seconds");
                     if (coolDownTime > 0) {
                         double secondsSinceLastUse = ((System.currentTimeMillis() - lastUsedSetHome.getOrDefault(player, 0L)) * 0.001);
-                        if (secondsSinceLastUse < coolDownTime) // Command is ON cooldown
-                        {
+                        if (secondsSinceLastUse < coolDownTime) { // Command is ON cooldown
                             int secondsLeft = (int) (coolDownTime - secondsSinceLastUse);
                             player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + secondsLeft + ChatColor.GRAY + " seconds.");
                         } else { // Command is OFF cooldown
