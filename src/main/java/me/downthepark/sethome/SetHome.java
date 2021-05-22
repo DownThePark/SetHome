@@ -43,13 +43,13 @@ public class SetHome extends JavaPlugin {
                     if (homeIsSet(player)) {
                         int coolDownTime = config.getInt("home-delay-seconds");
                         if (coolDownTime > 0) {
-                            double SecondsSinceLastUse = ((System.currentTimeMillis() - lastUsedHome.getOrDefault(player, 0L)) * 0.001);
-                            if (SecondsSinceLastUse < coolDownTime) { // Command is ON cooldown
-                                int SecondsLeft = (int) (coolDownTime - SecondsSinceLastUse);
+                            double secondsSinceLastUse = ((System.currentTimeMillis() - lastUsedHome.getOrDefault(player, 0L)) * 0.001);
+                            if (secondsSinceLastUse < coolDownTime) { // Command is ON cooldown
+                                int secondsLeft = (int) (coolDownTime - secondsSinceLastUse);
                                 if (config.getBoolean("home-warmup-instead-of-cooldown")) {
-                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds...");
+                                    player.sendMessage(prefixError + "Teleporting after " + ChatColor.RED + secondsLeft + ChatColor.GRAY + " seconds...");
                                 } else {
-                                    player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds.");
+                                    player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + secondsLeft + ChatColor.GRAY + " seconds.");
                                 }
                             } else { // Command is OFF cooldown
                                 if (config.getBoolean("home-warmup-instead-of-cooldown")) {
@@ -78,11 +78,11 @@ public class SetHome extends JavaPlugin {
                     Player player = (Player) sender;
                     int coolDownTime = config.getInt("sethome-delay-seconds");
                     if (coolDownTime > 0) {
-                        double SecondsSinceLastUse = ((System.currentTimeMillis() - lastUsedSetHome.getOrDefault(player, 0L)) * 0.001);
-                        if (SecondsSinceLastUse < coolDownTime) // Command is ON cooldown
+                        double secondsSinceLastUse = ((System.currentTimeMillis() - lastUsedSetHome.getOrDefault(player, 0L)) * 0.001);
+                        if (secondsSinceLastUse < coolDownTime) // Command is ON cooldown
                         {
-                            int SecondsLeft = (int) (coolDownTime - SecondsSinceLastUse);
-                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + SecondsLeft + ChatColor.GRAY + " seconds.");
+                            int secondsLeft = (int) (coolDownTime - secondsSinceLastUse);
+                            player.sendMessage(prefixError + "You must wait for " + ChatColor.RED + secondsLeft + ChatColor.GRAY + " seconds.");
                         } else { // Command is OFF cooldown
                             setPlayerHome(player);
                             lastUsedSetHome.put(player, System.currentTimeMillis());
