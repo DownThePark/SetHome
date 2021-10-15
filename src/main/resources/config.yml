@@ -10,7 +10,7 @@ play-warp-sound: true
 respawn-player-at-home: true
 
 sethome-command-delay: false
-sethome-time-delay: 5
+sethome-time-delay: 0
 
 home-command-delay: true
-home-time-delay: 5
+home-time-delay: 0
