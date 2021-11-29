@@ -1,5 +1,7 @@
 # SetHome
 
+### NOTE: Project Discontinued
+
 ### Introduction
 Looking for a simple SetHome plugin? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do only two things.
 
