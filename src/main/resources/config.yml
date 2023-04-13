@@ -6,6 +6,9 @@ sethome-message: '&2[&a*&2]&a &aYou now have a new home, &6%player%&a!'
 show-teleport-message: false
 teleport-message: '&2[&a*&2]&a &aYou have been teleported to your home, &6%player%&a!'
 
+show-deletehome-message: true
+deletehome-message: '&2[&a*&2]&a &aYour home was successfully deleted!'
+
 play-warp-sound: true
 respawn-player-at-home: true
 

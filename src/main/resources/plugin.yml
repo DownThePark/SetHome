@@ -7,3 +7,5 @@ commands:
     description: Set your home
   home:
     description: Warp to your home
+  deletehome:
+    description: Delete your current home

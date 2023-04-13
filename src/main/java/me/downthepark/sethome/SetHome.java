@@ -51,7 +51,7 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
         if (command.getName().equals("sethome")) {
             // --- Check if the one sending the command is the Console
             if (sender instanceof ConsoleCommandSender) {
-                // --- If the sender if Console, tell them to piss off
+                // --- If the sender if Console, tell them to piss off    <-- broo what?
                 getLogger().log(Level.WARNING, "Only players can use this command.");
 
             } else if (sender instanceof Player) { // --- Check if the sender is a Player
@@ -99,6 +99,25 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
                     }
                 }
             }
+        } else if (command.getName().equals("deletehome")) {
+            // --- Check if the one sending the command is the Console
+            if (sender instanceof ConsoleCommandSender) {
+                // --- If the sender if Console, tell them to piss off
+                getLogger().log(Level.WARNING, "Only players can use this command.");
+
+            } else if (sender instanceof Player) { // --- Check if the sender is a Player
+                // --- If the sender is a player, continue below
+                Player player = (Player) sender; // --- Create instance of Player and cast it to sender
+
+                if (utils.homeIsNull(player)) {
+                    player.sendMessage(prefixError + "No home found! First set your home with /sethome before you can delete it.");
+                } else {
+                    deletePlayerHome(player);
+                }
+            } else { // --- If anything goes wrong, tell the sender there was some sort of error that took place
+                sender.sendMessage(prefixError + "There was an error performing this command.");
+            }
+
         }
 
         return false;
@@ -109,6 +128,7 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
         // --- Make commands work using this 'getCommand()' function
         getCommand("sethome").setExecutor(this);
         getCommand("home").setExecutor(this);
+        getCommand("deletehome").setExecutor(this);
 
         // --- Register plugin events to server
         getServer().getPluginManager().registerEvents(new SetHomeEvents(this), this);
@@ -166,6 +186,16 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
         }
     }
 
+    void deletePlayerHome(Player player) {
+        // --- Delete player's home by removing it from the file (Homes.yml)
+        utils.deleteHome(player);
+        // --- If option 'show-deletehome-message' is enabled in config, show the player the 'deletehome-message' as defined in 'config.yml'
+        String strFormatted = config.getString("deletehome-message").replace("%player%", player.getDisplayName());
+        if (config.getBoolean("show-deletehome-message")) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', strFormatted));
+        }
+    }
+
     void setCoolDownTimeHome(Player player, int coolDown) {
         cooldownTimeHome.put(player, coolDown);
         cooldownTaskHome.put(player, new BukkitRunnable() {
@@ -194,5 +224,4 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
         });
         cooldownTaskSetHome.get(player).runTaskTimer(this, 20, 20);
     }
-
 }
