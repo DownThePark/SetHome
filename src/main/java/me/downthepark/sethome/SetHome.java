@@ -51,7 +51,7 @@ public class SetHome extends JavaPlugin { // --- SetHome is a JavaPlugin (Bukkit
         if (command.getName().equals("sethome")) {
             // --- Check if the one sending the command is the Console
             if (sender instanceof ConsoleCommandSender) {
-                // --- If the sender if Console, tell them to piss off    <-- broo what?
+                // --- If the sender if Console, tell them to piss off
                 getLogger().log(Level.WARNING, "Only players can use this command.");
 
             } else if (sender instanceof Player) { // --- Check if the sender is a Player
