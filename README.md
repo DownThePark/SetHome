@@ -27,8 +27,9 @@ This plugin saves each player's home into a "Homes.yml" file under the "SetHome"
 - 100% customizable in-game messages
 - Console notification for new updates
 - Support for cooldowns and warmups
-  - Support for command cancellation during move with warmups
+- Support for command cancellation during move with warmups
 
 ### Support
-If you need help with SetHome or have any issues to report, please do so either on the [Discussion](https://www.spigotmc.org/threads/set-home.198347/) tab or on the source code [Issues](https://github.com/DownThePark/SetHome/issues) page.
-
+- If you need help, have any issues to report, or would like to request new features, please do so on the [GitHub Issues](https://github.com/DownThePark/SetHome/issues) page.
+- The latest version of SetHome is only intended to support the latest version of Minecraft at the time of its publication.
+- Multiple homes are not supported and are not currently planned for implementation.
