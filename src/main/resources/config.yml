@@ -2,19 +2,19 @@
 
 # Settings for /sethome
 cmd-sethome-message-show: true
-cmd-sethome-cooldown: 3
+cmd-sethome-cooldown: 5
 cmd-sethome-warmup: 0
 cmd-sethome-warmup-cancel-on-move: false
 
 # Settings for /home
 cmd-home-message-show: false
-cmd-home-cooldown: 3
+cmd-home-cooldown: 5
 cmd-home-warmup: 0
 cmd-home-warmup-cancel-on-move: false
 
 # Settings for /delhome
 cmd-delhome-message-show: true
-cmd-delhome-cooldown: 3
+cmd-delhome-cooldown: 5
 cmd-delhome-warmup: 0
 cmd-delhome-warmup-cancel-on-move: false
 
