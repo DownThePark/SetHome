@@ -33,8 +33,8 @@ public class EventMove implements Listener {
         if (instance.commandExecutor.getWarmupInEffect().get(commandType)) {
             instance.commandExecutor.getWarmupTask().get(commandType).cancel();
             instance.commandExecutor.getWarmupInEffect().put(commandType, false);
+            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, player, null);
         }
-        instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, player, null);
     }
 
 }
