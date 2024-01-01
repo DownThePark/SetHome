@@ -19,6 +19,7 @@ public class SetHome extends JavaPlugin {
     public final MessageUtils messageUtils = new MessageUtils(this);
     public final HomeUtils homesUtils = new HomeUtils(this);
     public final Commands commands = new Commands(this);
+    public final ConfigV5ToV6 configV5ToV6 = new ConfigV5ToV6(this);
 
     @Override
     public void onEnable() {
