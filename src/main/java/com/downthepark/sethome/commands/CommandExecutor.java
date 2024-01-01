@@ -20,12 +20,12 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     }
 
     private final SetHome instance;
-    HashMap<COMMAND_TYPE, Integer> cooldownTime;
-    HashMap<COMMAND_TYPE, Integer> warmupTime;
-    HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
-    HashMap<COMMAND_TYPE, Boolean> warmupInEffect;
-    HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSeconds;
-    HashMap<COMMAND_TYPE, BukkitTask> warmupTask;
+    private HashMap<COMMAND_TYPE, Integer> cooldownTime;
+    private HashMap<COMMAND_TYPE, Integer> warmupTime;
+    private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
+    private static HashMap<COMMAND_TYPE, Boolean> warmupInEffect;
+    private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSeconds;
+    private static HashMap<COMMAND_TYPE, BukkitTask> warmupTask;
 
     public CommandExecutor(SetHome instance) {
         this.instance = instance;
@@ -59,12 +59,12 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTask.put(CommandExecutor.COMMAND_TYPE.DELHOME, null);
     }
 
-    public HashMap<COMMAND_TYPE, Boolean> getWarmupInEffect() {
-        return this.warmupInEffect;
+    public static HashMap<COMMAND_TYPE, Boolean> getWarmupInEffect() {
+        return warmupInEffect;
     }
 
-    public HashMap<COMMAND_TYPE, BukkitTask> getWarmupTask() {
-        return this.warmupTask;
+    public static HashMap<COMMAND_TYPE, BukkitTask> getWarmupTask() {
+        return warmupTask;
     }
 
     public void executeCmd(CommandExecutor.COMMAND_TYPE commandType, Player player) {
@@ -97,8 +97,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
                 warmupInEffect.put(commandType, false);
             }
         };
-        warmupTask.put(commandType, runnable.runTaskLater(instance, 20L * seconds));
         warmupInEffect.put(commandType, true);
+        warmupTask.put(commandType, runnable.runTaskLater(instance, 20L * seconds));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             if (cooldownInEffect.get(commandType))
                 return false;
             executeWarmup(commandType, player, warmupTime.get(commandType));
-        // Neither cooldown or warmup are enabled
+        // Both cooldown or warmup disabled
         } else {
             executeCmd(commandType, player);
         }

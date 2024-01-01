@@ -30,9 +30,9 @@ public class EventMove implements Listener {
     }
 
     private void cancelMove(CommandExecutor.COMMAND_TYPE commandType, Player player) {
-        if (instance.commandExecutor.getWarmupInEffect().get(commandType)) {
-            instance.commandExecutor.getWarmupTask().get(commandType).cancel();
-            instance.commandExecutor.getWarmupInEffect().put(commandType, false);
+        if (CommandExecutor.getWarmupInEffect().get(commandType)) {
+            CommandExecutor.getWarmupInEffect().put(commandType, false);
+            CommandExecutor.getWarmupTask().get(commandType).cancel();
             instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, player, null);
         }
     }

@@ -17,7 +17,6 @@ public class SetHome extends JavaPlugin {
     public MessageUtils messageUtils = new MessageUtils(this);
     public HomeUtils homesUtils = new HomeUtils(this);
     public Commands commands = new Commands(this);
-    public CommandExecutor commandExecutor = new CommandExecutor(this);
 
     @Override
     public void onEnable() {
