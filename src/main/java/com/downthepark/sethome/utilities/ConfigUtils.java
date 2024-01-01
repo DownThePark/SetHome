@@ -29,10 +29,6 @@ public class ConfigUtils {
     public boolean EXTRA_RESPAWN_AT_HOME;
     public boolean EXTRA_CHECK_UPDATES;
 
-    // Config settings
-    public boolean CONFIG_AUTO_RELOAD;
-    public int CONFIG_AUTO_RELOAD_INTERVAL;
-
     // Settings for messages
     public String MESSAGE_CMD_SETHOME;
     public String MESSAGE_CMD_HOME;
@@ -66,8 +62,6 @@ public class ConfigUtils {
         EXTRA_PLAY_WARP_SOUND = instance.getConfig().getBoolean("extra-play-warp-sound");
         EXTRA_RESPAWN_AT_HOME = instance.getConfig().getBoolean("extra-respawn-at-home");
         EXTRA_CHECK_UPDATES = instance.getConfig().getBoolean("extra-check-updates");
-        CONFIG_AUTO_RELOAD = instance.getConfig().getBoolean("config-auto-reload");
-        CONFIG_AUTO_RELOAD_INTERVAL = instance.getConfig().getInt("config-auto-reload-interval");
         MESSAGE_CMD_SETHOME = instance.getConfig().getString("message-cmd-sethome");
         MESSAGE_CMD_HOME = instance.getConfig().getString("message-cmd-home");
         MESSAGE_CMD_DELHOME = instance.getConfig().getString("message-cmd-delhome");
