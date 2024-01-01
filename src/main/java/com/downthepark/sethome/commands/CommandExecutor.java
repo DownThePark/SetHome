@@ -123,10 +123,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
         // Both cooldown and warmup enabled
         if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) > 0) {
-            if (warmupTime.get(commandType) > cooldownTime.get(commandType))
-                cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, warmupTime.get(commandType)));
-            else
-                cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeWarmup(commandType, player, warmupTime.get(commandType));
@@ -140,9 +137,6 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         }
         // Just warmup enabled
         else if (cooldownTime.get(commandType) <= 0 && warmupTime.get(commandType) > 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, warmupTime.get(commandType)));
-            if (cooldownInEffect.get(commandType))
-                return false;
             executeWarmup(commandType, player, warmupTime.get(commandType));
         // Both cooldown and warmup disabled
         } else {
