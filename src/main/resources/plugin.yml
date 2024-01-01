@@ -3,6 +3,8 @@ version: '${project.version}'
 main: com.downthepark.sethome.SetHome
 api-version: '1.20'
 description: A lightweight SetHome plugin for Bukkit/Spigot
+author: DownThePark
+website: www.spigotmc.org/resources/set-home.32748
 commands:
   sethome:
     description: Set your home
