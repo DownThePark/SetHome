@@ -1,14 +1,14 @@
 # SetHome
 
 ### Introduction
-Looking for a simple SetHome plugin? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do only two things.
+Looking for a simple plugin for players to set their homes? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do a few things.
 
-1) Set a player's home.
-2) Allow the player to go to their home.
+SetHome allows players to:
+1) Set a home for themselves.
+2) Go to their home.
+3) Delete their home. (W.I.P)
 
 This plugin saves each player's home into a "Homes.yml" file under the "SetHome" directory in the plugins folder.
-
-This is great for Survival servers that need something simple and lightweight. Server owners and administraters can use this over any other plugin in favor of extra performance.
 
 ### Screenshots:
 ![Screenshot](https://i.imgur.com/GK3eEFD.png)
@@ -16,12 +16,15 @@ This is great for Survival servers that need something simple and lightweight. S
 ### Commands:
 - /sethome
 - /home
+- /delhome (W.I.P)
 
 ### Permissions:
 - None required
 
 ### Extra Features
-These are some neat extra features. They can be disabled in 'config.yml'.
-- Respawn player to their home saved in "Homes.yml" on death
-- Play an enderman sound when player teleports to their home
-- Customizable messages 
+- Players are respawned to their home on death
+- An Enderman warp sound  is played upon teleportation
+- Support for command cooldowns and warmups
+- 100% customizable messages
+
+These features can be configured in "config.yml" under the "SetHome" directory in the plugins folder.
