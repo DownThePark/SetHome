@@ -79,7 +79,7 @@ public class HomeUtils {
         homesYaml.set("Homes." + player.getUniqueId() + ".World", null);
         saveHomesFile();
         if (instance.configUtils.CMD_DELHOME_MESSAGE_SHOW)
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
+            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELHOME, player, null);
     }
 
     public void saveHomesFile() {
