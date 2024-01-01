@@ -1,0 +1,12 @@
+name: SetHome
+version: '${project.version}'
+main: com.downthepark.sethome.SetHome
+api-version: '1.20'
+description: A lightweight SetHome plugin for Bukkit/Spigot
+commands:
+  sethome:
+    description: Set your home
+  home:
+    description: Warp to your home
+  delhome:
+    description: Delete your home
