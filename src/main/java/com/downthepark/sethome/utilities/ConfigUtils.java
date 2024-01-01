@@ -4,6 +4,8 @@ import com.downthepark.sethome.SetHome;
 
 public class ConfigUtils {
 
+    private final SetHome instance;
+
     // Settings for /sethome
     public boolean CMD_SETHOME_MESSAGE_SHOW;
     public int CMD_SETHOME_COOLDOWN;
@@ -43,6 +45,12 @@ public class ConfigUtils {
     public String MESSAGE_DENY_CONSOLE;
 
     public ConfigUtils(SetHome instance) {
+        this.instance = instance;
+        this.reloadConfig();
+    }
+
+    public void reloadConfig() {
+        instance.reloadConfig();
         CMD_SETHOME_MESSAGE_SHOW = instance.getConfig().getBoolean("cmd-sethome-message-show");
         CMD_SETHOME_COOLDOWN = instance.getConfig().getInt("cmd-sethome-cooldown");
         CMD_SETHOME_WARMUP = instance.getConfig().getInt("cmd-sethome-warmup");

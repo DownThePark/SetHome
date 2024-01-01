@@ -1,6 +1,7 @@
 package com.downthepark.sethome;
 
 import com.downthepark.sethome.commands.Commands;
+import com.downthepark.sethome.converters.ConfigManipulation;
 import com.downthepark.sethome.converters.ConfigV5ToV6;
 import com.downthepark.sethome.events.EventMove;
 import com.downthepark.sethome.events.EventRespawn;
@@ -19,6 +20,7 @@ public class SetHome extends JavaPlugin {
     public final MessageUtils messageUtils = new MessageUtils(this);
     public final HomeUtils homesUtils = new HomeUtils(this);
     public final Commands commands = new Commands(this);
+    public final ConfigManipulation configManipulation = new ConfigManipulation(this);
     public final ConfigV5ToV6 configV5ToV6 = new ConfigV5ToV6(this);
 
     @Override
