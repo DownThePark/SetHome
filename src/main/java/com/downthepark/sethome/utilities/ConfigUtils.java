@@ -25,6 +25,7 @@ public class ConfigUtils {
     // Extra settings
     public boolean EXTRA_PLAY_WARP_SOUND;
     public boolean EXTRA_RESPAWN_AT_HOME;
+    public boolean EXTRA_CHECK_UPDATES;
 
     // Config settings
     public boolean CONFIG_AUTO_RELOAD;
@@ -56,6 +57,7 @@ public class ConfigUtils {
         CMD_DELHOME_WARMUP_CANCEL_ON_MOVE = instance.getConfig().getBoolean("cmd-delhome-warmup-cancel-on-move");
         EXTRA_PLAY_WARP_SOUND = instance.getConfig().getBoolean("extra-play-warp-sound");
         EXTRA_RESPAWN_AT_HOME = instance.getConfig().getBoolean("extra-respawn-at-home");
+        EXTRA_CHECK_UPDATES = instance.getConfig().getBoolean("extra-check-updates");
         CONFIG_AUTO_RELOAD = instance.getConfig().getBoolean("config-auto-reload");
         CONFIG_AUTO_RELOAD_INTERVAL = instance.getConfig().getInt("config-auto-reload-interval");
         MESSAGE_CMD_SETHOME = instance.getConfig().getString("message-cmd-sethome");

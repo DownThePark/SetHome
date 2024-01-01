@@ -21,6 +21,7 @@ cmd-delhome-warmup-cancel-on-move: false
 # Extra settings
 extra-play-warp-sound: true
 extra-respawn-at-home: true
+extra-check-updates: true
 
 # Config settings
 config-auto-reload: false
