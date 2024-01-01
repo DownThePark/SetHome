@@ -22,9 +22,9 @@ public class UpdateChecker {
     public void getVersion(final Consumer<String> consumer) {
         if (!instance.configUtils.EXTRA_CHECK_UPDATES) return;
         Bukkit.getScheduler().runTaskAsynchronously(this.instance, () -> {
-            try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId + "/~").openStream(); Scanner scann = new Scanner(is)) {
-                if (scann.hasNext()) {
-                    consumer.accept(scann.next());
+            try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(is)) {
+                if (scanner.hasNext()) {
+                    consumer.accept(scanner.next());
                 }
             } catch (IOException e) {
                 instance.getLogger().info("Unable to check for updates: " + e.getMessage());
