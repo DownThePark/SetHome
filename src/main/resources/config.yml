@@ -29,7 +29,7 @@ message-cmd-home: '&2[&a*&2] &aYou have been teleported to your home, &6%player%
 message-cmd-delhome: '&2[&a*&2] &aYour home has been deleted, &6%player%&a!'
 message-missing-home: '&4[&c*&4] &cWe couldn''t find your home, &6%player%&7&c! You can use &a/sethome &cto set one.'
 message-missing-world: '&4[&c*&4] &cError! The world where your home was set in no longer exists!'
-message-cooldown: '&4[&c*&4] c7You must wait %seconds% seconds before you can use this command again!'
+message-cooldown: '&4[&c*&4] &c7You must wait %seconds% seconds before you can use this command again!'
 message-warmup: '&8[&7*&8] &7Executing command in %seconds% seconds...'
 message-on-move: '&4[&c*&4] &cSorry, but you''ve moved! Command cancelled.'
 message-deny-console: '&4[&c*&4] &cOnly in-game players can use this command!'
