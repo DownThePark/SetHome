@@ -22,6 +22,10 @@ cmd-delhome-warmup-cancel-on-move: false
 extra-play-warp-sound: true
 extra-respawn-at-home: true
 
+# Config settings
+config-auto-reload: false
+config-auto-reload-interval: 10
+
 # Settings for messages
 message-cmd-sethome: "&2[&a*&2] &aYou now have a new home, &6%player%&a!"
 message-cmd-home: "&2[&a*&2] &aYou have been teleported to your home, &6%player%&a!"
