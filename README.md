@@ -24,7 +24,8 @@ This plugin saves each player's home into a "Homes.yml" file under the "SetHome"
 ### Extra Features (config.yml)
 - Players are respawned to their home on death
 - An Enderman warp sound is played upon teleportation
-- Support for command cooldowns and warmups
 - 100% customizable in-game messages
 - Console notification for new updates
+- Support for cooldowns and warmups
+  - Support for command cancellation during move with warmups
 
