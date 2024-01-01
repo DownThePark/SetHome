@@ -37,10 +37,10 @@ public class SetHome extends JavaPlugin {
 
         // Check for updates
         new UpdateChecker(this, 32748).getVersion(version -> {
-            if (getDescription().getVersion().equals(version)) {
-                getLogger().info("There are no new updates available.");
-            } else {
+            if (!getDescription().getVersion().equals(version)) {
                 getLogger().info("There is a new update available! Update available at https://www.spigotmc.org/resources/set-home.32748/");
+            } else {
+                getLogger().info("There are no new updates available.");
             }
         });
     }
