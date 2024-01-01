@@ -20,7 +20,7 @@ public class Commands {
     }
 
     public void cmdDelHome(Player player) {
-        //asdf
+        instance.homesUtils.deletePlayerHome(player);
     }
 
 }

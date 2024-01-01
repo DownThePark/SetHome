@@ -70,6 +70,18 @@ public class HomeUtils {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
 
+    public void deletePlayerHome(Player player) {
+        homesYaml.set("Homes." + player.getUniqueId() + ".X", null);
+        homesYaml.set("Homes." + player.getUniqueId() + ".Y", null);
+        homesYaml.set("Homes." + player.getUniqueId() + ".Z", null);
+        homesYaml.set("Homes." + player.getUniqueId() + ".Yaw", null);
+        homesYaml.set("Homes." + player.getUniqueId() + ".Pitch", null);
+        homesYaml.set("Homes." + player.getUniqueId() + ".World", null);
+        saveHomesFile();
+        if (instance.configUtils.CMD_DELHOME_MESSAGE_SHOW)
+            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
+    }
+
     public void saveHomesFile() {
         try {
             homesYaml.save(homesFile);

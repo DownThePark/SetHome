@@ -13,7 +13,7 @@ cmd-home-warmup: 3
 cmd-home-warmup-cancel-on-move: false
 
 # Settings for /delhome
-cmd-delhome-message-show: false
+cmd-delhome-message-show: true
 cmd-delhome-cooldown: 3
 cmd-delhome-warmup: 0
 cmd-delhome-warmup-cancel-on-move: false

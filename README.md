@@ -6,7 +6,7 @@ Looking for a simple home setting plugin? One without permissions, maybe? Well, 
 SetHome allows players to:
 1) Set a home for themselves.
 2) Go to their home.
-3) Delete their home. (W.I.P)
+3) Delete their home.
 
 This plugin saves each player's home into a "Homes.yml" file under the "SetHome" directory in the plugins folder.
 
@@ -16,7 +16,7 @@ This plugin saves each player's home into a "Homes.yml" file under the "SetHome"
 ### Commands:
 - /sethome
 - /home
-- /delhome (W.I.P)
+- /delhome
 
 ### Permissions:
 - None required
