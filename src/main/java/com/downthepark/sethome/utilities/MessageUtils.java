@@ -17,7 +17,7 @@ public class MessageUtils {
     public enum MESSAGE_TYPE {
         CMD_SETHOME,
         CMD_HOME,
-        CMD_DELHOME,
+        CMD_DELETEHOME,
         MISSING_HOME,
         MISSING_WORLD,
         COOLDOWN,
@@ -33,8 +33,8 @@ public class MessageUtils {
         else if (messageType == MESSAGE_TYPE.CMD_HOME) {
             sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_HOME, sender.getName(), Optional.ofNullable(seconds)));
         }
-        else if (messageType == MESSAGE_TYPE.CMD_DELHOME) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_DELHOME, sender.getName(), Optional.ofNullable(seconds)));
+        else if (messageType == MESSAGE_TYPE.CMD_DELETEHOME) {
+            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_DELETEHOME, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.MISSING_HOME) {
             sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_MISSING_HOME, sender.getName(), Optional.ofNullable(seconds)));

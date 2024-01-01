@@ -12,11 +12,11 @@ cmd-home-cooldown: 5
 cmd-home-warmup: 0
 cmd-home-warmup-cancel-on-move: false
 
-# Settings for /delhome
-cmd-delhome-message-show: true
-cmd-delhome-cooldown: 5
-cmd-delhome-warmup: 0
-cmd-delhome-warmup-cancel-on-move: false
+# Settings for /deletehome
+cmd-deletehome-message-show: true
+cmd-deletehome-cooldown: 5
+cmd-deletehome-warmup: 0
+cmd-deletehome-warmup-cancel-on-move: false
 
 # Extra settings
 extra-play-warp-sound: true
@@ -26,7 +26,7 @@ extra-check-updates: true
 # Message settings
 message-cmd-sethome: '&2[&a*&2] &aYou now have a new home, &6%player%&a!'
 message-cmd-home: '&2[&a*&2] &aYou have been teleported to your home, &6%player%&a!'
-message-cmd-delhome: '&2[&a*&2] &aYour home has been deleted, &6%player%&a!'
+message-cmd-deletehome: '&2[&a*&2] &aYour home has been deleted, &6%player%&a!'
 message-missing-home: '&4[&c*&4] &cWe couldn''t find your home, &6%player%&7&c! You can use &a/sethome &cto set one.'
 message-missing-world: '&4[&c*&4] &cError! The world where your home was set in no longer exists!'
 message-cooldown: '&4[&c*&4] &cYou must wait %seconds% seconds before you can use this command again!'

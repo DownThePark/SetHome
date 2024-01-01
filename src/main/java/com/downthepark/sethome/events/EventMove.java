@@ -24,8 +24,8 @@ public class EventMove implements Listener {
         if (instance.configUtils.CMD_HOME_WARMUP_CANCEL_ON_MOVE) {
             cancelMove(CommandExecutor.COMMAND_TYPE.HOME, event.getPlayer());
         }
-        if (instance.configUtils.CMD_DELHOME_WARMUP_CANCEL_ON_MOVE) {
-            cancelMove(CommandExecutor.COMMAND_TYPE.DELHOME, event.getPlayer());
+        if (instance.configUtils.CMD_DELETEHOME_WARMUP_CANCEL_ON_MOVE) {
+            cancelMove(CommandExecutor.COMMAND_TYPE.DELETEHOME, event.getPlayer());
         }
     }
 

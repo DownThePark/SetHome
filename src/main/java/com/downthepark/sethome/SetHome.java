@@ -31,7 +31,7 @@ public class SetHome extends JavaPlugin {
         // Register commands
         getCommand("sethome").setExecutor(new CommandExecutor(this));
         getCommand("home").setExecutor(new CommandExecutor(this));
-        getCommand("delhome").setExecutor(new CommandExecutor(this));
+        getCommand("deletehome").setExecutor(new CommandExecutor(this));
 
         // Register events
         getServer().getPluginManager().registerEvents(new EventRespawn(this), this);

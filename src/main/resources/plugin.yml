@@ -10,5 +10,5 @@ commands:
     description: Set your home
   home:
     description: Warp to your home
-  delhome:
+  deletehome:
     description: Delete your home

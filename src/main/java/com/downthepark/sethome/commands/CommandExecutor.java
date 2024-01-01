@@ -16,7 +16,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     public enum COMMAND_TYPE {
         SETHOME,
         HOME,
-        DELHOME
+        DELETEHOME
     }
 
     private final SetHome instance;
@@ -41,22 +41,22 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTask = new HashMap<>();
         cooldownTime.put(CommandExecutor.COMMAND_TYPE.SETHOME, instance.configUtils.CMD_SETHOME_COOLDOWN);
         cooldownTime.put(CommandExecutor.COMMAND_TYPE.HOME, instance.configUtils.CMD_HOME_COOLDOWN);
-        cooldownTime.put(CommandExecutor.COMMAND_TYPE.DELHOME, instance.configUtils.CMD_DELHOME_COOLDOWN);
+        cooldownTime.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, instance.configUtils.CMD_DELETEHOME_COOLDOWN);
         warmupTime.put(CommandExecutor.COMMAND_TYPE.SETHOME, instance.configUtils.CMD_SETHOME_WARMUP);
         warmupTime.put(CommandExecutor.COMMAND_TYPE.HOME, instance.configUtils.CMD_HOME_WARMUP);
-        warmupTime.put(CommandExecutor.COMMAND_TYPE.DELHOME, instance.configUtils.CMD_DELHOME_WARMUP);
+        warmupTime.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, instance.configUtils.CMD_DELETEHOME_WARMUP);
         cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.SETHOME, false);
         cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.HOME, false);
-        cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.DELHOME, false);
+        cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, false);
         warmupInEffect.put(CommandExecutor.COMMAND_TYPE.SETHOME, false);
         warmupInEffect.put(CommandExecutor.COMMAND_TYPE.HOME, false);
-        warmupInEffect.put(CommandExecutor.COMMAND_TYPE.DELHOME, false);
+        warmupInEffect.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, false);
         cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.SETHOME, new HashMap<>());
         cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.HOME, new HashMap<>());
-        cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.DELHOME, new HashMap<>());
+        cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, new HashMap<>());
         warmupTask.put(CommandExecutor.COMMAND_TYPE.SETHOME, null);
         warmupTask.put(CommandExecutor.COMMAND_TYPE.HOME, null);
-        warmupTask.put(CommandExecutor.COMMAND_TYPE.DELHOME, null);
+        warmupTask.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, null);
     }
 
     public static HashMap<COMMAND_TYPE, Boolean> getWarmupInEffect() {
@@ -72,8 +72,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             instance.commands.cmdSetHome(player);
         else if (commandType == CommandExecutor.COMMAND_TYPE.HOME)
             instance.commands.cmdHome(player);
-        else if (commandType == CommandExecutor.COMMAND_TYPE.DELHOME)
-            instance.commands.cmdDelHome(player);
+        else if (commandType == CommandExecutor.COMMAND_TYPE.DELETEHOME)
+            instance.commands.cmdDeleteHome(player);
     }
 
     public boolean executeCooldown(HashMap<UUID, Long> cooldownMap, Player player, int seconds) {
@@ -117,8 +117,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         else if (command.getName().equals("home")) {
             commandType = COMMAND_TYPE.HOME;
         }
-        else if (command.getName().equals("delhome")) {
-            commandType = COMMAND_TYPE.DELHOME;
+        else if (command.getName().equals("deletehome")) {
+            commandType = COMMAND_TYPE.DELETEHOME;
         }
 
         // Both cooldown and warmup enabled

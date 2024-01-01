@@ -18,11 +18,11 @@ public class ConfigUtils {
     public int CMD_HOME_WARMUP;
     public boolean CMD_HOME_WARMUP_CANCEL_ON_MOVE;
 
-    // Settings for /delhome
-    public boolean CMD_DELHOME_MESSAGE_SHOW;
-    public int CMD_DELHOME_COOLDOWN;
-    public int CMD_DELHOME_WARMUP;
-    public boolean CMD_DELHOME_WARMUP_CANCEL_ON_MOVE;
+    // Settings for /deletehome
+    public boolean CMD_DELETEHOME_MESSAGE_SHOW;
+    public int CMD_DELETEHOME_COOLDOWN;
+    public int CMD_DELETEHOME_WARMUP;
+    public boolean CMD_DELETEHOME_WARMUP_CANCEL_ON_MOVE;
 
     // Extra settings
     public boolean EXTRA_PLAY_WARP_SOUND;
@@ -32,7 +32,7 @@ public class ConfigUtils {
     // Settings for messages
     public String MESSAGE_CMD_SETHOME;
     public String MESSAGE_CMD_HOME;
-    public String MESSAGE_CMD_DELHOME;
+    public String MESSAGE_CMD_DELETEHOME;
     public String MESSAGE_MISSING_HOME;
     public String MESSAGE_MISSING_WORLD;
     public String MESSAGE_COOLDOWN;
@@ -55,16 +55,16 @@ public class ConfigUtils {
         CMD_HOME_COOLDOWN = instance.getConfig().getInt("cmd-home-cooldown");
         CMD_HOME_WARMUP = instance.getConfig().getInt("cmd-home-warmup");
         CMD_HOME_WARMUP_CANCEL_ON_MOVE = instance.getConfig().getBoolean("cmd-home-warmup-cancel-on-move");
-        CMD_DELHOME_MESSAGE_SHOW = instance.getConfig().getBoolean("cmd-delhome-message-show");
-        CMD_DELHOME_COOLDOWN = instance.getConfig().getInt("cmd-delhome-cooldown");
-        CMD_DELHOME_WARMUP = instance.getConfig().getInt("cmd-delhome-warmup");
-        CMD_DELHOME_WARMUP_CANCEL_ON_MOVE = instance.getConfig().getBoolean("cmd-delhome-warmup-cancel-on-move");
+        CMD_DELETEHOME_MESSAGE_SHOW = instance.getConfig().getBoolean("cmd-deletehome-message-show");
+        CMD_DELETEHOME_COOLDOWN = instance.getConfig().getInt("cmd-deletehome-cooldown");
+        CMD_DELETEHOME_WARMUP = instance.getConfig().getInt("cmd-deletehome-warmup");
+        CMD_DELETEHOME_WARMUP_CANCEL_ON_MOVE = instance.getConfig().getBoolean("cmd-deletehome-warmup-cancel-on-move");
         EXTRA_PLAY_WARP_SOUND = instance.getConfig().getBoolean("extra-play-warp-sound");
         EXTRA_RESPAWN_AT_HOME = instance.getConfig().getBoolean("extra-respawn-at-home");
         EXTRA_CHECK_UPDATES = instance.getConfig().getBoolean("extra-check-updates");
         MESSAGE_CMD_SETHOME = instance.getConfig().getString("message-cmd-sethome");
         MESSAGE_CMD_HOME = instance.getConfig().getString("message-cmd-home");
-        MESSAGE_CMD_DELHOME = instance.getConfig().getString("message-cmd-delhome");
+        MESSAGE_CMD_DELETEHOME = instance.getConfig().getString("message-cmd-deletehome");
         MESSAGE_MISSING_HOME = instance.getConfig().getString("message-missing-home");
         MESSAGE_MISSING_WORLD = instance.getConfig().getString("message-missing-world");
         MESSAGE_COOLDOWN = instance.getConfig().getString("message-cooldown");

@@ -19,7 +19,7 @@ public class Commands {
         instance.homesUtils.sendPlayerHome(player);
     }
 
-    public void cmdDelHome(Player player) {
+    public void cmdDeleteHome(Player player) {
         instance.homesUtils.deletePlayerHome(player);
     }
 
