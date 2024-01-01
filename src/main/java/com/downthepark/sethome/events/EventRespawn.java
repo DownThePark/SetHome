@@ -16,7 +16,7 @@ public class EventRespawn implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         if (instance.configUtils.EXTRA_RESPAWN_AT_HOME)
-            if (instance.homesUtils.homeExists(event.getPlayer()))
+            if (instance.homesUtils.homeExists(event.getPlayer(), false))
                 event.setRespawnLocation(instance.homesUtils.getPlayerHome(event.getPlayer()));
     }
 
