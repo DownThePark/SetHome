@@ -20,7 +20,8 @@ public class Commands {
     }
 
     public void cmdDeleteHome(Player player) {
-        instance.homesUtils.deletePlayerHome(player);
+        if (instance.homesUtils.homeExists(player, true))
+            instance.homesUtils.deletePlayerHome(player);
     }
 
 }
