@@ -132,15 +132,15 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             executeWarmup(commandType, player, warmupTime.get(commandType));
         }
         // Just cooldown enabled
-        else if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) == 0) {
+        else if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) <= 0) {
             cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeCmd(commandType, player);
         }
         // Just warmup enabled
-        else if (cooldownTime.get(commandType) == 0 && warmupTime.get(commandType) > 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
+        else if (cooldownTime.get(commandType) <= 0 && warmupTime.get(commandType) > 0) {
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, warmupTime.get(commandType)));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeWarmup(commandType, player, warmupTime.get(commandType));
