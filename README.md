@@ -1,7 +1,7 @@
 # SetHome
 
 ### Introduction
-Looking for a simple plugin for players to set their homes? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do a few things right.
+Looking for a simple home setting plugin? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do a few things.
 
 SetHome allows players to:
 1) Set a home for themselves.
@@ -21,10 +21,9 @@ This plugin saves each player's home into a "Homes.yml" file under the "SetHome"
 ### Permissions:
 - None required
 
-### Extra Features
-- Players are respawned to their home on death
-- An Enderman warp sound  is played upon teleportation
+### Extra Features (config.yml)
+- Players can be respawned to their home on death
+- An Enderman warp sound can be played upon teleportation
 - Support for command cooldowns and warmups
 - 100% customizable messages
 
-These features can be configured in "config.yml" under the "SetHome" directory in the plugins folder.
