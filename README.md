@@ -1,7 +1,7 @@
 # SetHome
 
 ### Introduction
-Looking for a simple plugin for players to set their homes? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do a few things.
+Looking for a simple plugin for players to set their homes? One without permissions, maybe? Well, you've come to the right place. SetHome is a lightweight plugin designed to do a few things right.
 
 SetHome allows players to:
 1) Set a home for themselves.
