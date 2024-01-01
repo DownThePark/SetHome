@@ -8,8 +8,8 @@ cmd-sethome-warmup-cancel-on-move: false
 
 # Settings for /home
 cmd-home-message-show: false
-cmd-home-cooldown: 0
-cmd-home-warmup: 3
+cmd-home-cooldown: 3
+cmd-home-warmup: 0
 cmd-home-warmup-cancel-on-move: false
 
 # Settings for /delhome
