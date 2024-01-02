@@ -38,6 +38,10 @@ public class HomeUtils {
 
     }
 
+    public void clearMemory() {
+
+    }
+
     public boolean homeExists(Player player, boolean verbose) {
         String worldPath = "World";
         if (getHomeYaml(player).getString(worldPath) == null) {
