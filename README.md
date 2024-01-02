@@ -8,7 +8,7 @@ SetHome allows your players to:
 - Go to their home.
 - Delete their home.
 
-This plugin saves each player's home into a "Homes.yml" file under the "SetHome" directory in the plugins folder.
+This plugin saves each player's home into its own file under the "plugins/SetHome/homes" folder.
 
 ### Screenshots:
 ![Screenshot](https://i.imgur.com/GK3eEFD.png)
