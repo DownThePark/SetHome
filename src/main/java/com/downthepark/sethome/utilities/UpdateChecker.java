@@ -22,7 +22,7 @@ public class UpdateChecker {
     public void getVersion(final Consumer<String> consumer) {
         if (!instance.configUtils.EXTRA_CHECK_UPDATES) return;
         Bukkit.getScheduler().runTaskAsynchronously(this.instance, () -> {
-            try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(is)) {
+            try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId + "/~").openStream(); Scanner scanner = new Scanner(is)) {
                 if (scanner.hasNext()) {
                     consumer.accept(scanner.next());
                 }
