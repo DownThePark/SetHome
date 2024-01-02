@@ -8,28 +8,44 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class HomeUtils {
 
     private final SetHome instance;
-    private final File homesFile;
-    private final YamlConfiguration homesYaml;
+    private final String homesFilePath;
+    private HashMap<UUID, File> homeFiles;
+    private HashMap<UUID, YamlConfiguration> homeYamls;
 
     public HomeUtils(SetHome instance) {
         this.instance = instance;
-        homesFile = new File(instance.getDataFolder(), "Homes.yml");
-        homesYaml = YamlConfiguration.loadConfiguration(homesFile);
+        homesFilePath = instance.getDataFolder() + File.separator + "homes";
+        homeFiles = new HashMap<>();
+        homeYamls = new HashMap<>();
+        if (!new File(homesFilePath).exists()) {
+            try {
+                Files.createDirectories(Paths.get(homesFilePath));
+            }
+            catch (IOException e) {
+                // Do nothing
+            }
+        }
+
     }
 
     public boolean homeExists(Player player, boolean verbose) {
-        String worldPath = "Homes." + player.getUniqueId() + ".World";
-        if (homesYaml.getString(worldPath) == null) {
+        String worldPath = "World";
+        if (getHomeYaml(player).getString(worldPath) == null) {
             if (verbose)
                 instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_HOME, player, null);
             return false;
         }
-        if (Bukkit.getWorld(homesYaml.getString(worldPath)) == null) {
+        if (Bukkit.getWorld(getHomeYaml(player).getString(worldPath)) == null) {
             if (verbose)
                 instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_WORLD, player, null);
             return false;
@@ -38,25 +54,25 @@ public class HomeUtils {
     }
 
     public void setPlayerHome(Player player) {
-        homesYaml.set("Homes." + player.getUniqueId() + ".X", player.getLocation().getX());
-        homesYaml.set("Homes." + player.getUniqueId() + ".Y", player.getLocation().getY());
-        homesYaml.set("Homes." + player.getUniqueId() + ".Z", player.getLocation().getZ());
-        homesYaml.set("Homes." + player.getUniqueId() + ".Yaw", player.getLocation().getYaw());
-        homesYaml.set("Homes." + player.getUniqueId() + ".Pitch", player.getLocation().getPitch());
-        homesYaml.set("Homes." + player.getUniqueId() + ".World", player.getLocation().getWorld().getName());
-        saveHomesFile();
+        getHomeYaml(player).set("X", player.getLocation().getX());
+        getHomeYaml(player).set("Y", player.getLocation().getY());
+        getHomeYaml(player).set("Z", player.getLocation().getZ());
+        getHomeYaml(player).set("Yaw", player.getLocation().getYaw());
+        getHomeYaml(player).set("Pitch", player.getLocation().getPitch());
+        getHomeYaml(player).set("World", player.getLocation().getWorld().getName());
+        saveHomesFile(player);
         if (instance.configUtils.CMD_SETHOME_MESSAGE_SHOW)
             instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
     }
 
     public Location getPlayerHome(Player player) {
         return new Location(
-                Bukkit.getWorld(homesYaml.getString("Homes." + player.getUniqueId() + ".World")),
-                homesYaml.getDouble("Homes." + player.getUniqueId() + ".X"),
-                homesYaml.getDouble("Homes." + player.getUniqueId() + ".Y"),
-                homesYaml.getDouble("Homes." + player.getUniqueId() + ".Z"),
-                homesYaml.getLong("Homes." + player.getUniqueId() + ".Yaw"),
-                homesYaml.getLong("Homes." + player.getUniqueId() + ".Pitch")
+                Bukkit.getWorld(getHomeYaml(player).getString("World")),
+                getHomeYaml(player).getDouble("X"),
+                getHomeYaml(player).getDouble("Y"),
+                getHomeYaml(player).getDouble("Z"),
+                getHomeYaml(player).getLong("Yaw"),
+                getHomeYaml(player).getLong("Pitch")
         );
     }
 
@@ -71,24 +87,47 @@ public class HomeUtils {
     }
 
     public void deletePlayerHome(Player player) {
-        homesYaml.set("Homes." + player.getUniqueId() + ".X", null);
-        homesYaml.set("Homes." + player.getUniqueId() + ".Y", null);
-        homesYaml.set("Homes." + player.getUniqueId() + ".Z", null);
-        homesYaml.set("Homes." + player.getUniqueId() + ".Yaw", null);
-        homesYaml.set("Homes." + player.getUniqueId() + ".Pitch", null);
-        homesYaml.set("Homes." + player.getUniqueId() + ".World", null);
-        saveHomesFile();
+        if (!homeExists(player, true)) return;
+        getHomeYaml(player).set("X", null);
+        getHomeYaml(player).set("Y", null);
+        getHomeYaml(player).set("Z", null);
+        getHomeYaml(player).set("Yaw", null);
+        getHomeYaml(player).set("Pitch", null);
+        getHomeYaml(player).set("World", null);
+        saveHomesFile(player);
         if (instance.configUtils.CMD_DELETEHOME_MESSAGE_SHOW)
             instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, player, null);
     }
 
-    public void saveHomesFile() {
+    public void saveHomesFile(Player player) {
         try {
-            homesYaml.save(homesFile);
+            getHomeYaml(player).save(getHomeFile(player));
         } catch (Exception e) {
-            instance.getLogger().log(Level.SEVERE, "Error saving Homes.yaml!");
+            instance.getLogger().log(Level.SEVERE, "Error saving home for " + player.getName() + "!");
             e.printStackTrace();
         }
+    }
+
+    public File getHomeFile(Player player) {
+        if (!homeFiles.containsKey(player.getUniqueId())) {
+            homeFiles.put(player.getUniqueId(), new File(homesFilePath, player.getUniqueId() + ".yml"));
+        }
+        if (!homeFiles.get(player.getUniqueId()).exists()) {
+            try {
+                homeFiles.get(player.getUniqueId()).createNewFile();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return homeFiles.get(player.getUniqueId());
+    }
+
+    public YamlConfiguration getHomeYaml(Player player) {
+        if (!homeYamls.containsKey(player.getUniqueId())) {
+            homeYamls.put(player.getUniqueId(), YamlConfiguration.loadConfiguration(getHomeFile(player)));
+        }
+        return homeYamls.get(player.getUniqueId());
     }
 
 }

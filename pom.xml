@@ -6,7 +6,7 @@
 
   <groupId>com.downthepark</groupId>
   <artifactId>SetHome</artifactId>
-  <version>6.0.2</version>
+  <version>6.1.0</version>
   <packaging>jar</packaging>
 
   <name>SetHome</name>
