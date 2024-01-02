@@ -16,15 +16,12 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class HomeUtils {
-
-    private final SetHome instance;
     private final String homesFilePath;
     private HashMap<UUID, File> homeFiles;
     private HashMap<UUID, YamlConfiguration> homeYamls;
 
-    public HomeUtils(SetHome instance) {
-        this.instance = instance;
-        homesFilePath = instance.getDataFolder() + File.separator + "homes";
+    public HomeUtils() {
+        homesFilePath = SetHome.getInstance().getDataFolder() + File.separator + "homes";
         homeFiles = new HashMap<>();
         homeYamls = new HashMap<>();
         if (!new File(homesFilePath).exists()) {
@@ -42,12 +39,12 @@ public class HomeUtils {
         String worldPath = "World";
         if (getHomeYaml(player).getString(worldPath) == null) {
             if (verbose)
-                instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_HOME, player, null);
+                SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_HOME, player, null);
             return false;
         }
         if (Bukkit.getWorld(getHomeYaml(player).getString(worldPath)) == null) {
             if (verbose)
-                instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_WORLD, player, null);
+                SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_WORLD, player, null);
             return false;
         }
         return true;
@@ -61,8 +58,8 @@ public class HomeUtils {
         getHomeYaml(player).set("Pitch", player.getLocation().getPitch());
         getHomeYaml(player).set("World", player.getLocation().getWorld().getName());
         saveHomesFile(player);
-        if (instance.configUtils.CMD_SETHOME_MESSAGE_SHOW)
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
+        if (SetHome.getInstance().configUtils.CMD_SETHOME_MESSAGE_SHOW)
+            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
     }
 
     public Location getPlayerHome(Player player) {
@@ -80,9 +77,9 @@ public class HomeUtils {
         if (!homeExists(player, true)) return;
         Location home = getPlayerHome(player);
         player.teleport(home);
-        if (instance.configUtils.CMD_HOME_MESSAGE_SHOW)
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_HOME, player, null);
-        if (instance.configUtils.EXTRA_PLAY_WARP_SOUND)
+        if (SetHome.getInstance().configUtils.CMD_HOME_MESSAGE_SHOW)
+            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_HOME, player, null);
+        if (SetHome.getInstance().configUtils.EXTRA_PLAY_WARP_SOUND)
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
 
@@ -95,15 +92,15 @@ public class HomeUtils {
         getHomeYaml(player).set("Pitch", null);
         getHomeYaml(player).set("World", null);
         saveHomesFile(player);
-        if (instance.configUtils.CMD_DELETEHOME_MESSAGE_SHOW)
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, player, null);
+        if (SetHome.getInstance().configUtils.CMD_DELETEHOME_MESSAGE_SHOW)
+            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, player, null);
     }
 
     public void saveHomesFile(Player player) {
         try {
             getHomeYaml(player).save(getHomeFile(player));
         } catch (Exception e) {
-            instance.getLogger().log(Level.SEVERE, "Error saving home for " + player.getName() + "!");
+            SetHome.getInstance().getLogger().log(Level.SEVERE, "Error saving home for " + player.getName() + "!");
             e.printStackTrace();
         }
     }

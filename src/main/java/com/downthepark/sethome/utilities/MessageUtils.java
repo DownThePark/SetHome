@@ -8,12 +8,6 @@ import java.util.Optional;
 
 public class MessageUtils {
 
-    private final SetHome instance;
-
-    public MessageUtils(SetHome instance) {
-        this.instance = instance;
-    }
-
     public enum MESSAGE_TYPE {
         CMD_SETHOME,
         CMD_HOME,
@@ -28,31 +22,31 @@ public class MessageUtils {
 
     public void displayMessage(MESSAGE_TYPE messageType, CommandSender sender, Integer seconds) {
         if (messageType == MESSAGE_TYPE.CMD_SETHOME) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_SETHOME, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_CMD_SETHOME, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.CMD_HOME) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_HOME, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_CMD_HOME, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.CMD_DELETEHOME) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_CMD_DELETEHOME, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_CMD_DELETEHOME, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.MISSING_HOME) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_MISSING_HOME, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_MISSING_HOME, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.MISSING_WORLD) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_MISSING_WORLD, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_MISSING_WORLD, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.COOLDOWN) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_COOLDOWN, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_COOLDOWN, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.WARMUP) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_WARMUP, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_WARMUP, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.ON_MOVE) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_ON_MOVE, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_ON_MOVE, sender.getName(), Optional.ofNullable(seconds)));
         }
         else if (messageType == MESSAGE_TYPE.DENY_CONSOLE) {
-            sender.sendMessage(formatMessage(instance.configUtils.MESSAGE_DENY_CONSOLE, sender.getName(), Optional.ofNullable(seconds)));
+            sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_DENY_CONSOLE, sender.getName(), Optional.ofNullable(seconds)));
         }
     }
 

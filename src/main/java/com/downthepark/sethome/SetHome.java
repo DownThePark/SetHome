@@ -1,12 +1,12 @@
 package com.downthepark.sethome;
 
+import com.downthepark.sethome.commands.CommandExecutor;
 import com.downthepark.sethome.commands.Commands;
 import com.downthepark.sethome.converters.ConfigManipulation;
 import com.downthepark.sethome.converters.ConfigV5ToV6;
 import com.downthepark.sethome.converters.HomesV5ToV6;
 import com.downthepark.sethome.events.EventMove;
 import com.downthepark.sethome.events.EventRespawn;
-import com.downthepark.sethome.commands.CommandExecutor;
 import com.downthepark.sethome.utilities.ConfigUtils;
 import com.downthepark.sethome.utilities.HomeUtils;
 import com.downthepark.sethome.utilities.MessageUtils;
@@ -16,6 +16,16 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SetHome extends JavaPlugin {
+
+    private static SetHome instance;
+
+    public SetHome() {
+        SetHome.instance = this;
+    }
+
+    public static SetHome getInstance() {
+        return SetHome.instance;
+    }
 
     public ConfigUtils configUtils;
     public MessageUtils messageUtils;
@@ -31,25 +41,25 @@ public class SetHome extends JavaPlugin {
         saveDefaultConfig();
 
         // Initialize objects
-        configUtils = new ConfigUtils(this);
-        messageUtils = new MessageUtils(this);
-        homeUtils = new HomeUtils(this);
-        commands = new Commands(this);
-        configManipulation = new ConfigManipulation(this);
-        configV5ToV6 = new ConfigV5ToV6(this);
-        homesV5ToV6 = new HomesV5ToV6(this);
+        configUtils = new ConfigUtils();
+        messageUtils = new MessageUtils();
+        homeUtils = new HomeUtils();
+        commands = new Commands();
+        configManipulation = new ConfigManipulation();
+        configV5ToV6 = new ConfigV5ToV6();
+        homesV5ToV6 = new HomesV5ToV6();
 
         // Register commands
-        getCommand("sethome").setExecutor(new CommandExecutor(this));
-        getCommand("home").setExecutor(new CommandExecutor(this));
-        getCommand("deletehome").setExecutor(new CommandExecutor(this));
+        getCommand("sethome").setExecutor(new CommandExecutor());
+        getCommand("home").setExecutor(new CommandExecutor());
+        getCommand("deletehome").setExecutor(new CommandExecutor());
 
         // Register events
-        getServer().getPluginManager().registerEvents(new EventRespawn(this), this);
-        getServer().getPluginManager().registerEvents(new EventMove(this), this);
+        getServer().getPluginManager().registerEvents(new EventRespawn(), this);
+        getServer().getPluginManager().registerEvents(new EventMove(), this);
 
         // Check for updates
-        new UpdateChecker(this, 32748).getVersion(version -> {
+        new UpdateChecker(32748).getVersion(version -> {
             if (!getDescription().getVersion().equals(version)) {
                 getLogger().info("SetHome Remote version: " + version);
                 getLogger().info("SetHome Local version: " + getDescription().getVersion());

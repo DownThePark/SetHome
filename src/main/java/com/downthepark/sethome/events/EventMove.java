@@ -10,21 +10,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class EventMove implements Listener {
 
-    private final SetHome instance;
-
-    public EventMove(SetHome instance) {
-        this.instance = instance;
-    }
-
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (instance.configUtils.CMD_SETHOME_WARMUP_CANCEL_ON_MOVE) {
+        if (SetHome.getInstance().configUtils.CMD_SETHOME_WARMUP_CANCEL_ON_MOVE) {
             cancelMove(CommandExecutor.COMMAND_TYPE.SETHOME, event.getPlayer());
         }
-        if (instance.configUtils.CMD_HOME_WARMUP_CANCEL_ON_MOVE) {
+        if (SetHome.getInstance().configUtils.CMD_HOME_WARMUP_CANCEL_ON_MOVE) {
             cancelMove(CommandExecutor.COMMAND_TYPE.HOME, event.getPlayer());
         }
-        if (instance.configUtils.CMD_DELETEHOME_WARMUP_CANCEL_ON_MOVE) {
+        if (SetHome.getInstance().configUtils.CMD_DELETEHOME_WARMUP_CANCEL_ON_MOVE) {
             cancelMove(CommandExecutor.COMMAND_TYPE.DELETEHOME, event.getPlayer());
         }
     }
@@ -33,7 +27,7 @@ public class EventMove implements Listener {
         if (CommandExecutor.getWarmupInEffect().get(commandType)) {
             CommandExecutor.getWarmupInEffect().put(commandType, false);
             CommandExecutor.getWarmupTask().get(commandType).cancel();
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, player, null);
+            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, player, null);
         }
     }
 

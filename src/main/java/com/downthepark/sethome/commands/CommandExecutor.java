@@ -19,7 +19,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         DELETEHOME
     }
 
-    private final SetHome instance;
+    //private final SetHome instance;
     private HashMap<COMMAND_TYPE, Integer> cooldownTime;
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
     private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
@@ -27,8 +27,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSeconds;
     private static HashMap<COMMAND_TYPE, BukkitTask> warmupTask;
 
-    public CommandExecutor(SetHome instance) {
-        this.instance = instance;
+    public CommandExecutor() {
         initializeHashMaps();
     }
 
@@ -39,24 +38,24 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupInEffect = new HashMap<>();
         cooldownSeconds = new HashMap<>();
         warmupTask = new HashMap<>();
-        cooldownTime.put(CommandExecutor.COMMAND_TYPE.SETHOME, instance.configUtils.CMD_SETHOME_COOLDOWN);
-        cooldownTime.put(CommandExecutor.COMMAND_TYPE.HOME, instance.configUtils.CMD_HOME_COOLDOWN);
-        cooldownTime.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, instance.configUtils.CMD_DELETEHOME_COOLDOWN);
-        warmupTime.put(CommandExecutor.COMMAND_TYPE.SETHOME, instance.configUtils.CMD_SETHOME_WARMUP);
-        warmupTime.put(CommandExecutor.COMMAND_TYPE.HOME, instance.configUtils.CMD_HOME_WARMUP);
-        warmupTime.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, instance.configUtils.CMD_DELETEHOME_WARMUP);
-        cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.SETHOME, false);
-        cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.HOME, false);
-        cooldownInEffect.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, false);
-        warmupInEffect.put(CommandExecutor.COMMAND_TYPE.SETHOME, false);
-        warmupInEffect.put(CommandExecutor.COMMAND_TYPE.HOME, false);
-        warmupInEffect.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, false);
-        cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.SETHOME, new HashMap<>());
-        cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.HOME, new HashMap<>());
-        cooldownSeconds.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, new HashMap<>());
-        warmupTask.put(CommandExecutor.COMMAND_TYPE.SETHOME, null);
-        warmupTask.put(CommandExecutor.COMMAND_TYPE.HOME, null);
-        warmupTask.put(CommandExecutor.COMMAND_TYPE.DELETEHOME, null);
+        cooldownTime.put(COMMAND_TYPE.SETHOME, SetHome.getInstance().configUtils.CMD_SETHOME_COOLDOWN);
+        cooldownTime.put(COMMAND_TYPE.HOME, SetHome.getInstance().configUtils.CMD_HOME_COOLDOWN);
+        cooldownTime.put(COMMAND_TYPE.DELETEHOME, SetHome.getInstance().configUtils.CMD_DELETEHOME_COOLDOWN);
+        warmupTime.put(COMMAND_TYPE.SETHOME, SetHome.getInstance().configUtils.CMD_SETHOME_WARMUP);
+        warmupTime.put(COMMAND_TYPE.HOME, SetHome.getInstance().configUtils.CMD_HOME_WARMUP);
+        warmupTime.put(COMMAND_TYPE.DELETEHOME, SetHome.getInstance().configUtils.CMD_DELETEHOME_WARMUP);
+        cooldownInEffect.put(COMMAND_TYPE.SETHOME, false);
+        cooldownInEffect.put(COMMAND_TYPE.HOME, false);
+        cooldownInEffect.put(COMMAND_TYPE.DELETEHOME, false);
+        warmupInEffect.put(COMMAND_TYPE.SETHOME, false);
+        warmupInEffect.put(COMMAND_TYPE.HOME, false);
+        warmupInEffect.put(COMMAND_TYPE.DELETEHOME, false);
+        cooldownSeconds.put(COMMAND_TYPE.SETHOME, new HashMap<>());
+        cooldownSeconds.put(COMMAND_TYPE.HOME, new HashMap<>());
+        cooldownSeconds.put(COMMAND_TYPE.DELETEHOME, new HashMap<>());
+        warmupTask.put(COMMAND_TYPE.SETHOME, null);
+        warmupTask.put(COMMAND_TYPE.HOME, null);
+        warmupTask.put(COMMAND_TYPE.DELETEHOME, null);
     }
 
     public static HashMap<COMMAND_TYPE, Boolean> getWarmupInEffect() {
@@ -67,20 +66,20 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         return warmupTask;
     }
 
-    public void executeCmd(CommandExecutor.COMMAND_TYPE commandType, Player player) {
-        if (commandType == CommandExecutor.COMMAND_TYPE.SETHOME)
-            instance.commands.cmdSetHome(player);
-        else if (commandType == CommandExecutor.COMMAND_TYPE.HOME)
-            instance.commands.cmdHome(player);
-        else if (commandType == CommandExecutor.COMMAND_TYPE.DELETEHOME)
-            instance.commands.cmdDeleteHome(player);
+    public void executeCmd(COMMAND_TYPE commandType, Player player) {
+        if (commandType == COMMAND_TYPE.SETHOME)
+            SetHome.getInstance().commands.cmdSetHome(player);
+        else if (commandType == COMMAND_TYPE.HOME)
+            SetHome.getInstance().commands.cmdHome(player);
+        else if (commandType == COMMAND_TYPE.DELETEHOME)
+            SetHome.getInstance().commands.cmdDeleteHome(player);
     }
 
     public boolean executeCooldown(HashMap<UUID, Long> cooldownMap, Player player, int seconds) {
         if (cooldownMap.containsKey(player.getUniqueId())) {
             long secondsLeft = ((cooldownMap.get(player.getUniqueId()) / 1000) + seconds) - (System.currentTimeMillis() / 1000);
             if (secondsLeft > 0) {
-                instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.COOLDOWN, player, (int) secondsLeft);
+                SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.COOLDOWN, player, (int) secondsLeft);
                 return true;
             }
         }
@@ -89,7 +88,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     }
 
     public void executeWarmup(CommandExecutor.COMMAND_TYPE commandType, Player player, int seconds) {
-        instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
+        SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
@@ -98,13 +97,13 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             }
         };
         warmupInEffect.put(commandType, true);
-        warmupTask.put(commandType, runnable.runTaskLater(instance, 20L * seconds));
+        warmupTask.put(commandType, runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            instance.messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.DENY_CONSOLE, sender, null);
+            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.DENY_CONSOLE, sender, null);
             return false;
         }
 

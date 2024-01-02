@@ -11,23 +11,21 @@ import java.util.function.Consumer;
 
 public class UpdateChecker {
 
-    private final SetHome instance;
     private final int resourceId;
 
-    public UpdateChecker(SetHome instance, int resourceId) {
-        this.instance = instance;
+    public UpdateChecker(int resourceId) {
         this.resourceId = resourceId;
     }
 
     public void getVersion(final Consumer<String> consumer) {
-        if (!instance.configUtils.EXTRA_CHECK_UPDATES) return;
-        Bukkit.getScheduler().runTaskAsynchronously(this.instance, () -> {
+        if (!SetHome.getInstance().configUtils.EXTRA_CHECK_UPDATES) return;
+        Bukkit.getScheduler().runTaskAsynchronously(SetHome.getInstance(), () -> {
             try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId + "/~").openStream(); Scanner scanner = new Scanner(is)) {
                 if (scanner.hasNext()) {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException e) {
-                instance.getLogger().info("Unable to check for updates: " + e.getMessage());
+                SetHome.getInstance().getLogger().info("Unable to check for updates: " + e.getMessage());
             }
         });
     }

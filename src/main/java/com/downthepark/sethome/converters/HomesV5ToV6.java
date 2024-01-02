@@ -13,15 +13,13 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class HomesV5ToV6 {
-
-    private final SetHome instance;
+    
     private File sourcePath;
     private File backupPath;
 
-    public HomesV5ToV6(SetHome instance) {
-        this.instance = instance;
-        sourcePath = new File(instance.getDataFolder(), "Homes.yml");
-        backupPath = new File(instance.getDataFolder(), "Homes.yml.v5.backup");
+    public HomesV5ToV6() {
+        sourcePath = new File(SetHome.getInstance().getDataFolder(), "Homes.yml");
+        backupPath = new File(SetHome.getInstance().getDataFolder(), "Homes.yml.v5.backup");
         if (!homesDotYamlExists()) {
             sourcePath = null;
             backupPath = null;
@@ -42,19 +40,19 @@ public class HomesV5ToV6 {
 
     private void backupHomesDotYaml() {
         if (backupPath.exists()) return;
-        instance.getLogger().log(Level.INFO, "Old homes file found! Backing up to: " + backupPath);
+        SetHome.getInstance().getLogger().log(Level.INFO, "Old homes file found! Backing up to: " + backupPath);
         try {
             Files.copy(sourcePath.toPath(), backupPath.toPath());
-            instance.getLogger().log(Level.INFO, "Old configuration successfully backed up to: " + backupPath);
+            SetHome.getInstance().getLogger().log(Level.INFO, "Old configuration successfully backed up to: " + backupPath);
         }
         catch (IOException e) {
-            instance.getLogger().log(Level.SEVERE, "An error occurred while trying to backup " + sourcePath + " - Please manually backup this file.");
+            SetHome.getInstance().getLogger().log(Level.SEVERE, "An error occurred while trying to backup " + sourcePath + " - Please manually backup this file.");
             throw new RuntimeException(e);
         }
     }
 
     private void convertHomes() {
-        instance.getLogger().info("Converting old homes format to new homes format! This might take a while...");
+        SetHome.getInstance().getLogger().info("Converting old homes format to new homes format! This might take a while...");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(sourcePath);
         Set<String> keys = yaml.getKeys(true);
 
@@ -90,7 +88,7 @@ public class HomesV5ToV6 {
             uuid = value1.getKey();
             pairs = value1.getValue();
 
-            File homeFile = new File(instance.getDataFolder() + File.separator + "homes",  uuid.toString() + ".yml");
+            File homeFile = new File(SetHome.getInstance().getDataFolder() + File.separator + "homes",  uuid.toString() + ".yml");
             yaml = YamlConfiguration.loadConfiguration(homeFile);
 
             for (Map.Entry<String, String> coordinates : pairs.entrySet()) {
@@ -110,9 +108,9 @@ public class HomesV5ToV6 {
                 }
             }
         }
-        instance.getLogger().info("All homes were successfully converted!");
+        SetHome.getInstance().getLogger().info("All homes were successfully converted!");
         if (sourcePath.delete()) {
-            instance.getLogger().info("Deleting Homes.yml at: " + sourcePath);
+            SetHome.getInstance().getLogger().info("Deleting Homes.yml at: " + sourcePath);
         }
     }
 
