@@ -6,6 +6,7 @@ import com.downthepark.sethome.converters.ConfigManipulation;
 import com.downthepark.sethome.converters.ConfigV5ToV6;
 import com.downthepark.sethome.converters.HomesV5ToV6;
 import com.downthepark.sethome.events.EventMove;
+import com.downthepark.sethome.events.EventQuit;
 import com.downthepark.sethome.events.EventRespawn;
 import com.downthepark.sethome.utilities.ConfigUtils;
 import com.downthepark.sethome.utilities.HomeUtils;
@@ -55,8 +56,9 @@ public class SetHome extends JavaPlugin {
         getCommand("deletehome").setExecutor(new CommandExecutor());
 
         // Register events
-        getServer().getPluginManager().registerEvents(new EventRespawn(), this);
         getServer().getPluginManager().registerEvents(new EventMove(), this);
+        getServer().getPluginManager().registerEvents(new EventQuit(), this);
+        getServer().getPluginManager().registerEvents(new EventRespawn(), this);
 
         // Check for updates
         new UpdateChecker(32748).getVersion(version -> {

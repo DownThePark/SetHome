@@ -17,8 +17,9 @@ import java.util.logging.Level;
 
 public class HomeUtils {
     private final String homesFilePath;
-    private HashMap<UUID, File> homeFiles;
-    private HashMap<UUID, YamlConfiguration> homeYamls;
+
+    private final HashMap<UUID, File> homeFiles;
+    private final HashMap<UUID, YamlConfiguration> homeYamls;
 
     public HomeUtils() {
         homesFilePath = SetHome.getInstance().getDataFolder() + File.separator + "homes";
@@ -33,6 +34,14 @@ public class HomeUtils {
             }
         }
 
+    }
+
+    public HashMap<UUID, File> getHomeFiles() {
+        return homeFiles;
+    }
+
+    public HashMap<UUID, YamlConfiguration> getHomeYamls() {
+        return homeYamls;
     }
 
     public boolean homeExists(Player player, boolean verbose) {
@@ -96,7 +105,7 @@ public class HomeUtils {
             SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, player, null);
     }
 
-    public void saveHomesFile(Player player) {
+    private void saveHomesFile(Player player) {
         try {
             getHomeYaml(player).save(getHomeFile(player));
         } catch (Exception e) {
@@ -105,7 +114,7 @@ public class HomeUtils {
         }
     }
 
-    public File getHomeFile(Player player) {
+    private File getHomeFile(Player player) {
         if (!homeFiles.containsKey(player.getUniqueId())) {
             homeFiles.put(player.getUniqueId(), new File(homesFilePath, player.getUniqueId() + ".yml"));
         }
@@ -120,7 +129,7 @@ public class HomeUtils {
         return homeFiles.get(player.getUniqueId());
     }
 
-    public YamlConfiguration getHomeYaml(Player player) {
+    private YamlConfiguration getHomeYaml(Player player) {
         if (!homeYamls.containsKey(player.getUniqueId())) {
             homeYamls.put(player.getUniqueId(), YamlConfiguration.loadConfiguration(getHomeFile(player)));
         }
