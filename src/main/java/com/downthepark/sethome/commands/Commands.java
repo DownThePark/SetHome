@@ -12,16 +12,16 @@ public class Commands {
     }
 
     public void cmdSetHome(Player player) {
-        instance.homesUtils.setPlayerHome(player);
+        instance.homeUtils.setPlayerHome(player);
     }
 
     public void cmdHome(Player player) {
-        instance.homesUtils.sendPlayerHome(player);
+        instance.homeUtils.sendPlayerHome(player);
     }
 
     public void cmdDeleteHome(Player player) {
-        if (instance.homesUtils.homeExists(player, true))
-            instance.homesUtils.deletePlayerHome(player);
+        if (instance.homeUtils.homeExists(player, true))
+            instance.homeUtils.deletePlayerHome(player);
     }
 
 }
