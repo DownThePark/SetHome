@@ -19,12 +19,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         DELETEHOME
     }
 
-    //private final SetHome instance;
     private HashMap<COMMAND_TYPE, Integer> cooldownTime;
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
     private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
     private static HashMap<COMMAND_TYPE, Boolean> warmupInEffect;
-    private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSeconds;
+    private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSecondsLeft;
     private static HashMap<COMMAND_TYPE, BukkitTask> warmupTask;
 
     public CommandExecutor() {
@@ -36,7 +35,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTime = new HashMap<>();
         cooldownInEffect = new HashMap<>();
         warmupInEffect = new HashMap<>();
-        cooldownSeconds = new HashMap<>();
+        cooldownSecondsLeft = new HashMap<>();
         warmupTask = new HashMap<>();
         cooldownTime.put(COMMAND_TYPE.SETHOME, SetHome.getInstance().configUtils.CMD_SETHOME_COOLDOWN);
         cooldownTime.put(COMMAND_TYPE.HOME, SetHome.getInstance().configUtils.CMD_HOME_COOLDOWN);
@@ -50,9 +49,9 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupInEffect.put(COMMAND_TYPE.SETHOME, false);
         warmupInEffect.put(COMMAND_TYPE.HOME, false);
         warmupInEffect.put(COMMAND_TYPE.DELETEHOME, false);
-        cooldownSeconds.put(COMMAND_TYPE.SETHOME, new HashMap<>());
-        cooldownSeconds.put(COMMAND_TYPE.HOME, new HashMap<>());
-        cooldownSeconds.put(COMMAND_TYPE.DELETEHOME, new HashMap<>());
+        cooldownSecondsLeft.put(COMMAND_TYPE.SETHOME, new HashMap<>());
+        cooldownSecondsLeft.put(COMMAND_TYPE.HOME, new HashMap<>());
+        cooldownSecondsLeft.put(COMMAND_TYPE.DELETEHOME, new HashMap<>());
         warmupTask.put(COMMAND_TYPE.SETHOME, null);
         warmupTask.put(COMMAND_TYPE.HOME, null);
         warmupTask.put(COMMAND_TYPE.DELETEHOME, null);
@@ -122,14 +121,14 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
         // Both cooldown and warmup enabled
         if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) > 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownTime.get(commandType)));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeWarmup(commandType, player, warmupTime.get(commandType));
         }
         // Just cooldown enabled
         else if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) <= 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSeconds.get(commandType), player, cooldownTime.get(commandType)));
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownTime.get(commandType)));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeCmd(commandType, player);
