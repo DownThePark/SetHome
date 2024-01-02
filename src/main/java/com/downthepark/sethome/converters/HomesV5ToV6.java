@@ -8,21 +8,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class HomesV5ToV6 {
 
     private final SetHome instance;
-    private File source;
-    private File destination;
+    private File sourcePath;
+    private File backupPath;
 
     public HomesV5ToV6(SetHome instance) {
         this.instance = instance;
-        source = new File(instance.getDataFolder(), "Homes.yml");
-        destination = new File(instance.getDataFolder(), "Homes.yml.v5.backup");
+        sourcePath = new File(instance.getDataFolder(), "Homes.yml");
+        backupPath = new File(instance.getDataFolder(), "Homes.yml.v5.backup");
         if (!homesDotYamlExists()) {
-            source = null;
-            destination = null;
+            sourcePath = null;
+            backupPath = null;
             return;
         }
         //backupHomesDotYaml();
@@ -30,7 +31,7 @@ public class HomesV5ToV6 {
     }
 
     private boolean homesDotYamlExists() {
-        if (source.exists()) {
+        if (sourcePath.exists()) {
             return true;
         }
         else {
@@ -39,54 +40,60 @@ public class HomesV5ToV6 {
     }
 
     private void backupHomesDotYaml() {
-        if (destination.exists()) return;
-        instance.getLogger().log(Level.INFO, "Old homes file found! Backing up to: " + destination);
+        if (backupPath.exists()) return;
+        instance.getLogger().log(Level.INFO, "Old homes file found! Backing up to: " + backupPath);
         try {
-            Files.copy(source.toPath(), destination.toPath());
-            instance.getLogger().log(Level.INFO, "Old configuration successfully backed up to: " + destination);
+            Files.copy(sourcePath.toPath(), backupPath.toPath());
+            instance.getLogger().log(Level.INFO, "Old configuration successfully backed up to: " + backupPath);
         }
         catch (IOException e) {
-            instance.getLogger().log(Level.SEVERE, "An error occurred while trying to backup " + source + " - Please manually backup this file.");
+            instance.getLogger().log(Level.SEVERE, "An error occurred while trying to backup " + sourcePath + " - Please manually backup this file.");
             throw new RuntimeException(e);
         }
     }
 
     private void convertHomes() {
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(source);
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(sourcePath);
         Set<String> keys = yaml.getKeys(true);
 
+        HashMap<UUID, HashMap<String, String>> keyValues = new HashMap<>();
         HashMap<String, String> pairs = new HashMap<>();
+        UUID uuid = null;
 
         for (String k : keys) {
+            if (getDecimals(k) == 1) {
+                uuid = UUID.fromString(k.substring(6));
+            }
             if (getDecimals(k) == 2) {
                 if (k.endsWith(".X") || k.endsWith(".Y") || k.endsWith(".Z")) {
-                    String temp = k.substring(6);
-                    //String uuidStr = temp.substring(0, temp.length() - 2);
-                    instance.getLogger().info(temp);
-                    pairs.put(temp, String.valueOf(yaml.getDouble(k)));
+                    pairs.put(k.substring(k.length() - 1), String.valueOf(yaml.getDouble(k)));
                 }
-                if (k.endsWith(".Yaw")) {
-                    String temp = k.substring(6);
-                    instance.getLogger().info(temp);
-                    pairs.put(temp, String.valueOf(yaml.getDouble(k)));
+                else if (k.endsWith(".Yaw")) {
+                    pairs.put(k.substring(k.length() - 3), String.valueOf(yaml.getDouble(k)));
                 }
-                if (k.endsWith(".Pitch")) {
-                    String temp = k.substring(6);
-                    instance.getLogger().info(temp);
-                    pairs.put(temp, String.valueOf(yaml.getDouble(k)));
+                else if (k.endsWith(".Pitch")) {
+                    pairs.put(k.substring(k.length() - 5), String.valueOf(yaml.getDouble(k)));
                 }
-                if (k.endsWith(".World")) {
-                    String temp = k.substring(6);
-                    instance.getLogger().info(temp);
-                    pairs.put(temp, yaml.getString(k));
+                else if (k.endsWith(".World")) {
+                    pairs.put(k.substring(k.length() - 5), yaml.getString(k));
                 }
+                System.out.println(pairs.size());
             }
-
+            if (pairs.size() == 6) {
+                keyValues.put(uuid, pairs);
+                pairs = new HashMap<>();
+            }
         }
 
-        pairs.forEach((k, v) -> System.out.println("key: " + k + " value: " + v));
+        if (keyValues.containsKey(UUID.fromString("708b1d16-927d-4460-95dd-be953a6d4a94"))) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
 
-        //source.delete();
+        keyValues.forEach((k, v) -> System.out.println("Key: " + k + ", Value: " + v.get("X")));
+
+        //sourcePath.delete();
     }
 
     private int getDecimals(String string) {
