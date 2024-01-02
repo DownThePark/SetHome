@@ -54,6 +54,12 @@ public class SetHome extends JavaPlugin {
         // Unregister events
         PlayerRespawnEvent.getHandlerList().unregister(this);
         PlayerMoveEvent.getHandlerList().unregister(this);
+        /* ToDo: Find areas in code where arrays, maps, and variables
+            can be uninitialized, and create a clearMemory() function
+            in each applicable class.
+        */
+        homesUtils.clearMemory();
+        homesV5ToV6.clearMemory();
     }
 
 }

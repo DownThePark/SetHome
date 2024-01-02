@@ -30,6 +30,10 @@ public class HomesV5ToV6 {
         convertHomes();
     }
 
+    public void clearMemory() {
+        //
+    }
+
     private boolean homesDotYamlExists() {
         if (sourcePath.exists()) {
             return true;
