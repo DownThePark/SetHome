@@ -60,7 +60,7 @@ public class HomesV5ToV6 {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(sourcePath);
         Set<String> keys = yaml.getKeys(true);
 
-        HashMap<UUID, HashMap<String, String>> keyValues = new HashMap<>();
+        HashMap<UUID, HashMap<String, String>> keysAndValues = new HashMap<>();
         HashMap<String, String> pairs = new HashMap<>();
         UUID uuid = null;
 
@@ -84,18 +84,18 @@ public class HomesV5ToV6 {
                 System.out.println(pairs.size());
             }
             if (pairs.size() == 6) {
-                keyValues.put(uuid, pairs);
+                keysAndValues.put(uuid, pairs);
                 pairs = new HashMap<>();
             }
         }
 
-        if (keyValues.containsKey(UUID.fromString("708b1d16-927d-4460-95dd-be953a6d4a94"))) {
+        if (keysAndValues.containsKey(UUID.fromString("708b1d16-927d-4460-95dd-be953a6d4a94"))) {
             System.out.println("true");
         } else {
             System.out.println("false");
         }
 
-        keyValues.forEach((k, v) -> System.out.println("Key: " + k + ", Value: " + v.get("X")));
+        keysAndValues.forEach((k, v) -> System.out.println("Key: " + k + ", Value: " + v.get("X")));
 
         //sourcePath.delete();
     }
