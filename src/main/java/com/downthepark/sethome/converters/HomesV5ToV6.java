@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -26,7 +27,7 @@ public class HomesV5ToV6 {
             backupPath = null;
             return;
         }
-        //backupHomesDotYaml();
+        backupHomesDotYaml();
         convertHomes();
     }
 
@@ -53,6 +54,7 @@ public class HomesV5ToV6 {
     }
 
     private void convertHomes() {
+        instance.getLogger().info("Converting old homes format to new homes format! This might take a while...");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(sourcePath);
         Set<String> keys = yaml.getKeys(true);
 
@@ -77,7 +79,6 @@ public class HomesV5ToV6 {
                 else if (k.endsWith(".World")) {
                     pairs.put(k.substring(k.length() - 5), yaml.getString(k));
                 }
-                System.out.println(pairs.size());
             }
             if (pairs.size() == 6) {
                 keysAndValues.put(uuid, pairs);
@@ -85,15 +86,37 @@ public class HomesV5ToV6 {
             }
         }
 
-        if (keysAndValues.containsKey(UUID.fromString("708b1d16-927d-4460-95dd-be953a6d4a94"))) {
-            System.out.println("true");
-        } else {
-            System.out.println("false");
+        for ( Map.Entry<UUID, HashMap<String, String>> value1 : keysAndValues.entrySet() ) {
+            uuid = value1.getKey();
+            pairs = value1.getValue();
+            //System.out.println("\n" + uuid);
+
+            File homeFile = new File(instance.getDataFolder() + File.separator + "homes",  uuid.toString() + ".yml");
+            yaml = YamlConfiguration.loadConfiguration(homeFile);
+
+            for (Map.Entry<String, String> coordinates : pairs.entrySet()) {
+                String key = coordinates.getKey();
+                String value = coordinates.getValue();
+                //System.out.println("Key: " + key + ", Value: " + value);
+
+                if (key.equals("X") || key.equals("Y") || key.equals("Z") || key.equals("Yaw") || key.equals("Pitch"))
+                    yaml.set(key, Double.valueOf(value));
+                else if (key.equals("World"))
+                    yaml.set(key, value);
+
+                try {
+                    yaml.save(homeFile);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            };
         }
 
-        keysAndValues.forEach((k, v) -> System.out.println("Key: " + k + ", Value: " + v.get("X")));
-
-        //sourcePath.delete();
+        if (sourcePath.delete()) {
+            instance.getLogger().info("Deleting old file at: " + sourcePath);
+        }
+        instance.getLogger().info("All homes were successfully converted!");
     }
 
     private int getDecimals(String string) {
