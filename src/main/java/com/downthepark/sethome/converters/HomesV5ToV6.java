@@ -89,7 +89,6 @@ public class HomesV5ToV6 {
         for ( Map.Entry<UUID, HashMap<String, String>> value1 : keysAndValues.entrySet() ) {
             uuid = value1.getKey();
             pairs = value1.getValue();
-            //System.out.println("\n" + uuid);
 
             File homeFile = new File(instance.getDataFolder() + File.separator + "homes",  uuid.toString() + ".yml");
             yaml = YamlConfiguration.loadConfiguration(homeFile);
@@ -97,7 +96,6 @@ public class HomesV5ToV6 {
             for (Map.Entry<String, String> coordinates : pairs.entrySet()) {
                 String key = coordinates.getKey();
                 String value = coordinates.getValue();
-                //System.out.println("Key: " + key + ", Value: " + value);
 
                 if (key.equals("X") || key.equals("Y") || key.equals("Z") || key.equals("Yaw") || key.equals("Pitch"))
                     yaml.set(key, Double.valueOf(value));
@@ -110,13 +108,12 @@ public class HomesV5ToV6 {
                 catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            };
-        }
-
-        if (sourcePath.delete()) {
-            instance.getLogger().info("Deleting old file at: " + sourcePath);
+            }
         }
         instance.getLogger().info("All homes were successfully converted!");
+        if (sourcePath.delete()) {
+            instance.getLogger().info("Deleting Homes.yml at: " + sourcePath);
+        }
     }
 
     private int getDecimals(String string) {
