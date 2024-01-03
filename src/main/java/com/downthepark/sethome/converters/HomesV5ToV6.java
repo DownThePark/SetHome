@@ -96,9 +96,9 @@ public class HomesV5ToV6 {
                 String value = coordinates.getValue();
 
                 if (key.equals("X") || key.equals("Y") || key.equals("Z") || key.equals("Yaw") || key.equals("Pitch"))
-                    yaml.set(key, Double.valueOf(value));
+                    yaml.set("Homes.main." + key, Double.valueOf(value));
                 else if (key.equals("World"))
-                    yaml.set(key, value);
+                    yaml.set("Homes.main." + key, value);
 
                 try {
                     yaml.save(homeFile);
