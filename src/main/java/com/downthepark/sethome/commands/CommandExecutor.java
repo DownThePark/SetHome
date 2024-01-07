@@ -35,8 +35,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTime = new HashMap<>();
         cooldownInEffect = new HashMap<>();
         warmupInEffect = new HashMap<>();
+        warmupInEffectData = new HashMap<>();
         cooldownSecondsLeft = new HashMap<>();
         warmupTask = new HashMap<>();
+        warmupTaskData = new HashMap<>();
         cooldownTime.put(COMMAND_TYPE.SETHOME, SetHome.getInstance().configUtils.CMD_SETHOME_COOLDOWN);
         cooldownTime.put(COMMAND_TYPE.HOME, SetHome.getInstance().configUtils.CMD_HOME_COOLDOWN);
         cooldownTime.put(COMMAND_TYPE.DELETEHOME, SetHome.getInstance().configUtils.CMD_DELETEHOME_COOLDOWN);
