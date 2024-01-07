@@ -63,7 +63,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         return warmupTask;
     }
 
-    public void executeCmd(COMMAND_TYPE commandType, Player player) {
+    public void executeCmd(Player player, COMMAND_TYPE commandType) {
         if (commandType == COMMAND_TYPE.SETHOME)
             SetHome.getInstance().commands.cmdSetHome(player);
         else if (commandType == COMMAND_TYPE.HOME)
@@ -84,7 +84,6 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         }
         cooldownTaskData.put(commandType, System.currentTimeMillis());
         cooldownTask.put(player.getUniqueId(), cooldownTaskData);
-
         return false;
     }
 
@@ -138,7 +137,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             boolean running = executeCooldown(player, commandType, cooldownSeconds);
             if (running)
                 return false;
-            executeCmd(commandType, player);
+            executeCmd(player, commandType);
         }
         // Just warmup enabled
         else if (warmupSeconds > 0) {
@@ -146,7 +145,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         }
         // Both cooldown and warmup disabled
         else {
-            executeCmd(commandType, player);
+            executeCmd(player, commandType);
         }
 
         return false;
