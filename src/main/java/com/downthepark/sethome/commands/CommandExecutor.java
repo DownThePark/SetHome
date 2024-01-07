@@ -100,20 +100,18 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
     public void executeWarmup(CommandExecutor.COMMAND_TYPE commandType, Player player, int seconds) {
         SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
-        HashMap<UUID, Boolean> running = new HashMap<>();
-        running.put(player.getUniqueId(), false);
+        warmupInEffectData.put(player.getUniqueId(), false);
+        warmupInEffect.put(commandType, warmupInEffectData);
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 executeCmd(commandType, player);
-                warmupInEffect.put(commandType, running);
+                warmupInEffect.get(commandType).put(player.getUniqueId(), false);
             }
         };
-        running.put(player.getUniqueId(), true);
-        warmupInEffect.put(commandType, running);
-        HashMap<UUID, BukkitTask> task = new HashMap<>();
-        task.put(player.getUniqueId(), runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
-        warmupTask.put(commandType, task);
+        warmupInEffect.get(commandType).put(player.getUniqueId(), true);
+        warmupTaskData.put(player.getUniqueId(), runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
+        warmupTask.put(commandType, warmupTaskData);
     }
 
     @Override
