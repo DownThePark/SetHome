@@ -22,9 +22,9 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     private HashMap<COMMAND_TYPE, Integer> cooldownTime;
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
     private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
-    private static HashMap<COMMAND_TYPE, Boolean> warmupInEffect;
+    private static HashMap<COMMAND_TYPE, HashMap<UUID, Boolean>> warmupInEffect;
     private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSecondsLeft;
-    private static HashMap<COMMAND_TYPE, BukkitTask> warmupTask;
+    private static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> warmupTask;
 
     public CommandExecutor() {
         initializeHashMaps();
@@ -46,9 +46,9 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         cooldownInEffect.put(COMMAND_TYPE.SETHOME, false);
         cooldownInEffect.put(COMMAND_TYPE.HOME, false);
         cooldownInEffect.put(COMMAND_TYPE.DELETEHOME, false);
-        warmupInEffect.put(COMMAND_TYPE.SETHOME, false);
-        warmupInEffect.put(COMMAND_TYPE.HOME, false);
-        warmupInEffect.put(COMMAND_TYPE.DELETEHOME, false);
+        warmupInEffect.put(COMMAND_TYPE.SETHOME, null);
+        warmupInEffect.put(COMMAND_TYPE.HOME, null);
+        warmupInEffect.put(COMMAND_TYPE.DELETEHOME, null);
         cooldownSecondsLeft.put(COMMAND_TYPE.SETHOME, new HashMap<>());
         cooldownSecondsLeft.put(COMMAND_TYPE.HOME, new HashMap<>());
         cooldownSecondsLeft.put(COMMAND_TYPE.DELETEHOME, new HashMap<>());
@@ -57,11 +57,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTask.put(COMMAND_TYPE.DELETEHOME, null);
     }
 
-    public static HashMap<COMMAND_TYPE, Boolean> getWarmupInEffect() {
+    public static HashMap<COMMAND_TYPE, HashMap<UUID, Boolean>> getWarmupInEffect() {
         return warmupInEffect;
     }
 
-    public static HashMap<COMMAND_TYPE, BukkitTask> getWarmupTask() {
+    public static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> getWarmupTask() {
         return warmupTask;
     }
 
@@ -88,15 +88,20 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
     public void executeWarmup(CommandExecutor.COMMAND_TYPE commandType, Player player, int seconds) {
         SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
+        HashMap<UUID, Boolean> running = new HashMap<>();
+        running.put(player.getUniqueId(), false);
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 executeCmd(commandType, player);
-                warmupInEffect.put(commandType, false);
+                warmupInEffect.put(commandType, running);
             }
         };
-        warmupInEffect.put(commandType, true);
-        warmupTask.put(commandType, runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
+        running.put(player.getUniqueId(), true);
+        warmupInEffect.put(commandType, running);
+        HashMap<UUID, BukkitTask> task = new HashMap<>();
+        task.put(player.getUniqueId(), runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
+        warmupTask.put(commandType, task);
     }
 
     @Override
@@ -119,23 +124,25 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             commandType = COMMAND_TYPE.DELETEHOME;
         }
 
+        int cooldownSeconds = cooldownTime.get(commandType);
+        int warmupSeconds = warmupTime.get(commandType);
         // Both cooldown and warmup enabled
-        if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) > 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownTime.get(commandType)));
+        if (cooldownSeconds > 0 && warmupSeconds > 0) {
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownSeconds));
             if (cooldownInEffect.get(commandType))
                 return false;
-            executeWarmup(commandType, player, warmupTime.get(commandType));
+            executeWarmup(commandType, player, warmupSeconds);
         }
         // Just cooldown enabled
-        else if (cooldownTime.get(commandType) > 0 && warmupTime.get(commandType) <= 0) {
-            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownTime.get(commandType)));
+        else if (cooldownSeconds > 0) {
+            cooldownInEffect.put(commandType, executeCooldown(cooldownSecondsLeft.get(commandType), player, cooldownSeconds));
             if (cooldownInEffect.get(commandType))
                 return false;
             executeCmd(commandType, player);
         }
         // Just warmup enabled
-        else if (cooldownTime.get(commandType) <= 0 && warmupTime.get(commandType) > 0) {
-            executeWarmup(commandType, player, warmupTime.get(commandType));
+        else if (warmupSeconds > 0) {
+            executeWarmup(commandType, player, warmupSeconds);
         // Both cooldown and warmup disabled
         } else {
             executeCmd(commandType, player);
