@@ -23,8 +23,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
     private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
     private static HashMap<COMMAND_TYPE, HashMap<UUID, Boolean>> warmupInEffect;
+    private static HashMap<UUID, Boolean> warmupInEffectData;
     private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSecondsLeft;
     private static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> warmupTask;
+    private static HashMap<UUID, BukkitTask> warmupTaskData;
 
     public CommandExecutor() {
         initializeHashMaps();
@@ -65,6 +67,14 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
     public static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> getWarmupTask() {
         return warmupTask;
+    }
+
+    public static HashMap<UUID, Boolean> getWarmupInEffectData() {
+        return warmupInEffectData;
+    }
+
+    public static HashMap<UUID, BukkitTask> getWarmupTaskData() {
+        return warmupTaskData;
     }
 
     public void executeCmd(COMMAND_TYPE commandType, Player player) {
