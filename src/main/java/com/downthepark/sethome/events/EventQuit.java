@@ -14,6 +14,8 @@ public class EventQuit implements Listener {
         //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from File HashMap");
         SetHome.getInstance().homeUtils.getHomeYamls().remove(event.getPlayer().getUniqueId());
         //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from YamlConfiguration HashMap");
+        CommandExecutor.getCooldownTask().remove(event.getPlayer().getUniqueId());
+        //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from cooldownTask HashMap");
         CommandExecutor.getWarmupInEffect().remove(event.getPlayer().getUniqueId());
         //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from warmupInEffect HashMap");
         CommandExecutor.getWarmupTask().remove(event.getPlayer().getUniqueId());

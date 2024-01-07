@@ -51,6 +51,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         warmupTime.put(COMMAND_TYPE.DELETEHOME, SetHome.getInstance().configUtils.CMD_DELETEHOME_WARMUP);
     }
 
+    public static HashMap<UUID, HashMap<COMMAND_TYPE, Long>> getCooldownTask() {
+        return cooldownTask;
+    }
+
     public static HashMap<UUID, HashMap<COMMAND_TYPE, Boolean>> getWarmupInEffect() {
         return warmupInEffect;
     }
