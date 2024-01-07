@@ -92,9 +92,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                executeCmd(commandType, player);
-                warmupInEffectData.put(commandType, false);
-                warmupInEffect.put(player.getUniqueId(), warmupInEffectData);
+                executeCmd(player, commandType);
+                warmupInEffect.get(player.getUniqueId()).put(commandType, false);
             }
         };
         warmupInEffectData.put(commandType, true);
