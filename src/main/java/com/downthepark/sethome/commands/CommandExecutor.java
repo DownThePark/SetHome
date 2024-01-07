@@ -23,12 +23,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
 
     private static HashMap<UUID, HashMap<COMMAND_TYPE, Long>> cooldownTask;
-    private static HashMap<COMMAND_TYPE, Long> cooldownTaskData;
-
     private static HashMap<UUID, HashMap<COMMAND_TYPE, Boolean>> warmupInEffect;
-    private static HashMap<COMMAND_TYPE, Boolean> warmupInEffectData;
     private static HashMap<UUID, HashMap<COMMAND_TYPE, BukkitTask>> warmupTask;
-    private static HashMap<COMMAND_TYPE, BukkitTask> warmupTaskData;
 
     public CommandExecutor() {
         initializeHashMaps();
@@ -38,11 +34,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         cooldownTime = new HashMap<>();
         warmupTime = new HashMap<>();
         cooldownTask = new HashMap<>();
-        cooldownTaskData = new HashMap<>();
         warmupInEffect = new HashMap<>();
-        warmupInEffectData = new HashMap<>();
         warmupTask = new HashMap<>();
-        warmupTaskData = new HashMap<>();
         cooldownTime.put(COMMAND_TYPE.SETHOME, SetHome.getInstance().configUtils.CMD_SETHOME_COOLDOWN);
         cooldownTime.put(COMMAND_TYPE.HOME, SetHome.getInstance().configUtils.CMD_HOME_COOLDOWN);
         cooldownTime.put(COMMAND_TYPE.DELETEHOME, SetHome.getInstance().configUtils.CMD_DELETEHOME_COOLDOWN);
@@ -82,6 +75,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
                 }
             }
         }
+        HashMap<COMMAND_TYPE, Long> cooldownTaskData = new HashMap<>();
         cooldownTaskData.put(commandType, System.currentTimeMillis());
         cooldownTask.put(player.getUniqueId(), cooldownTaskData);
         return false;
@@ -96,8 +90,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
                 warmupInEffect.get(player.getUniqueId()).put(commandType, false);
             }
         };
+        HashMap<COMMAND_TYPE, Boolean> warmupInEffectData = new HashMap<>();
         warmupInEffectData.put(commandType, true);
         warmupInEffect.put(player.getUniqueId(), warmupInEffectData);
+
+        HashMap<COMMAND_TYPE, BukkitTask> warmupTaskData = new HashMap<>();
         warmupTaskData.put(commandType, runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
         warmupTask.put(player.getUniqueId(), warmupTaskData);
     }
