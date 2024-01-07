@@ -22,11 +22,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     private HashMap<COMMAND_TYPE, Integer> cooldownTime;
     private HashMap<COMMAND_TYPE, Integer> warmupTime;
     private HashMap<COMMAND_TYPE, Boolean> cooldownInEffect;
-    private static HashMap<COMMAND_TYPE, HashMap<UUID, Boolean>> warmupInEffect;
-    private static HashMap<UUID, Boolean> warmupInEffectData;
+    private static HashMap<UUID, HashMap<COMMAND_TYPE, Boolean>> warmupInEffect;
+    private static HashMap<COMMAND_TYPE, Boolean> warmupInEffectData;
     private HashMap<COMMAND_TYPE, HashMap<UUID, Long>> cooldownSecondsLeft;
-    private static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> warmupTask;
-    private static HashMap<UUID, BukkitTask> warmupTaskData;
+    private static HashMap<UUID, HashMap<COMMAND_TYPE, BukkitTask>> warmupTask;
+    private static HashMap<COMMAND_TYPE, BukkitTask> warmupTaskData;
 
     public CommandExecutor() {
         initializeHashMaps();
@@ -50,31 +50,17 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
         cooldownInEffect.put(COMMAND_TYPE.SETHOME, false);
         cooldownInEffect.put(COMMAND_TYPE.HOME, false);
         cooldownInEffect.put(COMMAND_TYPE.DELETEHOME, false);
-        warmupInEffect.put(COMMAND_TYPE.SETHOME, null);
-        warmupInEffect.put(COMMAND_TYPE.HOME, null);
-        warmupInEffect.put(COMMAND_TYPE.DELETEHOME, null);
         cooldownSecondsLeft.put(COMMAND_TYPE.SETHOME, new HashMap<>());
         cooldownSecondsLeft.put(COMMAND_TYPE.HOME, new HashMap<>());
         cooldownSecondsLeft.put(COMMAND_TYPE.DELETEHOME, new HashMap<>());
-        warmupTask.put(COMMAND_TYPE.SETHOME, null);
-        warmupTask.put(COMMAND_TYPE.HOME, null);
-        warmupTask.put(COMMAND_TYPE.DELETEHOME, null);
     }
 
-    public static HashMap<COMMAND_TYPE, HashMap<UUID, Boolean>> getWarmupInEffect() {
+    public static HashMap<UUID, HashMap<COMMAND_TYPE, Boolean>> getWarmupInEffect() {
         return warmupInEffect;
     }
 
-    public static HashMap<COMMAND_TYPE, HashMap<UUID, BukkitTask>> getWarmupTask() {
+    public static HashMap<UUID, HashMap<COMMAND_TYPE, BukkitTask>> getWarmupTask() {
         return warmupTask;
-    }
-
-    public static HashMap<UUID, Boolean> getWarmupInEffectData() {
-        return warmupInEffectData;
-    }
-
-    public static HashMap<UUID, BukkitTask> getWarmupTaskData() {
-        return warmupTaskData;
     }
 
     public void executeCmd(COMMAND_TYPE commandType, Player player) {
@@ -100,18 +86,18 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
 
     public void executeWarmup(CommandExecutor.COMMAND_TYPE commandType, Player player, int seconds) {
         SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
-        warmupInEffectData.put(player.getUniqueId(), false);
-        warmupInEffect.put(commandType, warmupInEffectData);
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 executeCmd(commandType, player);
-                warmupInEffect.get(commandType).put(player.getUniqueId(), false);
+                warmupInEffectData.put(commandType, false);
+                warmupInEffect.put(player.getUniqueId(), warmupInEffectData);
             }
         };
-        warmupInEffect.get(commandType).put(player.getUniqueId(), true);
-        warmupTaskData.put(player.getUniqueId(), runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
-        warmupTask.put(commandType, warmupTaskData);
+        warmupInEffectData.put(commandType, true);
+        warmupInEffect.put(player.getUniqueId(), warmupInEffectData);
+        warmupTaskData.put(commandType, runnable.runTaskLater(SetHome.getInstance(), 20L * seconds));
+        warmupTask.put(player.getUniqueId(), warmupTaskData);
     }
 
     @Override

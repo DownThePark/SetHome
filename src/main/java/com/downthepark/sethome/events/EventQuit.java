@@ -14,10 +14,10 @@ public class EventQuit implements Listener {
         //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from File HashMap");
         SetHome.getInstance().homeUtils.getHomeYamls().remove(event.getPlayer().getUniqueId());
         //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from YamlConfiguration HashMap");
-        CommandExecutor.getWarmupInEffectData().remove(event.getPlayer().getUniqueId());
-        //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from warmupInEffectData HashMap");
-        CommandExecutor.getWarmupTaskData().remove(event.getPlayer().getUniqueId());
-        //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from warmupTaskData HashMap");
+        CommandExecutor.getWarmupInEffect().remove(event.getPlayer().getUniqueId());
+        //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from warmupInEffect HashMap");
+        CommandExecutor.getWarmupTask().remove(event.getPlayer().getUniqueId());
+        //SetHome.getInstance().getLogger().info("Removed " + event.getPlayer().getUniqueId() + " from warmupTask HashMap");
     }
 
 }
