@@ -14,6 +14,7 @@ import com.downthepark.sethome.utilities.HomeUtils;
 import com.downthepark.sethome.utilities.MessageUtils;
 import com.downthepark.sethome.utilities.UpdateChecker;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -81,8 +82,9 @@ public class SetHome extends JavaPlugin {
         getCommand("deletehome").setExecutor(null);
 
         // Unregister events
-        PlayerRespawnEvent.getHandlerList().unregister(this);
         PlayerMoveEvent.getHandlerList().unregister(this);
+        PlayerQuitEvent.getHandlerList().unregister(this);
+        PlayerRespawnEvent.getHandlerList().unregister(this);
 
         // De-initialize objects
         configUtils = null;
