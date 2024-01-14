@@ -1,0 +1,26 @@
+name: Java CI with Maven
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build
+      - run: |
+          mvn package
+          mkdir staging/
+          cp target/SetHome-*.jar staging/
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: staging
