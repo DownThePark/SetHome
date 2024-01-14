@@ -16,21 +16,21 @@ public class EventMove implements Listener {
                 if (CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.SETHOME) == true) {
                     CommandExecutor.getWarmupTask().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.SETHOME).cancel();
                     CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).put(CommandExecutor.COMMAND_TYPE.SETHOME, false);
-                    SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, event.getPlayer(), null);
+                    SetHome.getInstance().messageUtils.displayMessage(event.getPlayer(), MessageUtils.MESSAGE_TYPE.ON_MOVE, null);
                 }
             }
             if (CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).containsKey(CommandExecutor.COMMAND_TYPE.HOME)) {
                 if (CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.HOME) == true) {
                     CommandExecutor.getWarmupTask().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.HOME).cancel();
                     CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).put(CommandExecutor.COMMAND_TYPE.HOME, false);
-                    SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, event.getPlayer(), null);
+                    SetHome.getInstance().messageUtils.displayMessage(event.getPlayer(), MessageUtils.MESSAGE_TYPE.ON_MOVE, null);
                 }
             }
             if (CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).containsKey(CommandExecutor.COMMAND_TYPE.DELETEHOME)) {
                 if (CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.DELETEHOME) == true) {
                     CommandExecutor.getWarmupTask().get(event.getPlayer().getUniqueId()).get(CommandExecutor.COMMAND_TYPE.DELETEHOME).cancel();
                     CommandExecutor.getWarmupInEffect().get(event.getPlayer().getUniqueId()).put(CommandExecutor.COMMAND_TYPE.DELETEHOME, false);
-                    SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.ON_MOVE, event.getPlayer(), null);
+                    SetHome.getInstance().messageUtils.displayMessage(event.getPlayer(), MessageUtils.MESSAGE_TYPE.ON_MOVE, null);
                 }
             }
         }

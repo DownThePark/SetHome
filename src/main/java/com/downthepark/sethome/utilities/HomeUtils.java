@@ -54,12 +54,12 @@ public class HomeUtils {
     public boolean homeExists(Player player, boolean verbose) {
         if (getHomeYaml(player).getString(PATH_WORLD) == null) {
             if (verbose)
-                SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_HOME, player, null);
+                SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.MISSING_HOME, null);
             return false;
         }
         if (Bukkit.getWorld(getHomeYaml(player).getString(PATH_WORLD)) == null) {
             if (verbose)
-                SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.MISSING_WORLD, player, null);
+                SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.MISSING_WORLD, null);
             return false;
         }
         return true;
@@ -74,7 +74,7 @@ public class HomeUtils {
         getHomeYaml(player).set(PATH_WORLD, player.getLocation().getWorld().getName());
         saveHomesFile(player);
         if (SetHome.getInstance().configUtils.CMD_SETHOME_MESSAGE_SHOW)
-            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_SETHOME, player, null);
+            SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.CMD_SETHOME, null);
     }
 
     public Location getPlayerHome(Player player) {
@@ -93,7 +93,7 @@ public class HomeUtils {
         Location home = getPlayerHome(player);
         player.teleport(home);
         if (SetHome.getInstance().configUtils.CMD_HOME_MESSAGE_SHOW)
-            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_HOME, player, null);
+            SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.CMD_HOME, null);
         if (SetHome.getInstance().configUtils.EXTRA_PLAY_WARP_SOUND)
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
@@ -108,7 +108,7 @@ public class HomeUtils {
         getHomeYaml(player).set(PATH_WORLD, null);
         saveHomesFile(player);
         if (SetHome.getInstance().configUtils.CMD_DELETEHOME_MESSAGE_SHOW)
-            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, player, null);
+            SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.CMD_DELETEHOME, null);
     }
 
     private void saveHomesFile(Player player) {

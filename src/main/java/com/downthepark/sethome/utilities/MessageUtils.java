@@ -20,7 +20,7 @@ public class MessageUtils {
         DENY_CONSOLE
     }
 
-    public void displayMessage(MESSAGE_TYPE messageType, CommandSender sender, Integer seconds) {
+    public void displayMessage(CommandSender sender, MESSAGE_TYPE messageType, Integer seconds) {
         if (messageType == MESSAGE_TYPE.CMD_SETHOME) {
             sender.sendMessage(formatMessage(SetHome.getInstance().configUtils.MESSAGE_CMD_SETHOME, sender.getName(), Optional.ofNullable(seconds)));
         }

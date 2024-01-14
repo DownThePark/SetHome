@@ -70,7 +70,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
             if (cooldownTask.get(player.getUniqueId()).containsKey(commandType)) {
                 long secondsLeft = ((cooldownTask.get(player.getUniqueId()).get(commandType) / 1000) + seconds) - (System.currentTimeMillis() / 1000);
                 if (secondsLeft > 0) {
-                    SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.COOLDOWN, player, (int) secondsLeft);
+                    SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.COOLDOWN, (int) secondsLeft);
                     return true;
                 }
             }
@@ -82,7 +82,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     }
 
     public void executeWarmup(Player player, COMMAND_TYPE commandType, int seconds) {
-        SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.WARMUP, player, seconds);
+        SetHome.getInstance().messageUtils.displayMessage(player, MessageUtils.MESSAGE_TYPE.WARMUP, seconds);
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
@@ -102,7 +102,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            SetHome.getInstance().messageUtils.displayMessage(MessageUtils.MESSAGE_TYPE.DENY_CONSOLE, sender, null);
+            SetHome.getInstance().messageUtils.displayMessage(sender, MessageUtils.MESSAGE_TYPE.DENY_CONSOLE, null);
             return false;
         }
 
